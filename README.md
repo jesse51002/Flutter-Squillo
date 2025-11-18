@@ -1,1 +1,3 @@
-# Flutter-Squillo
+# squillo
+
+A new Flutter project.
