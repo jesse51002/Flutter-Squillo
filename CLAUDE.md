@@ -17,7 +17,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - YAGNI (You Aren't Gonna Need It): Don't add features until needed
 - Separation of Concerns: Separate UI, business logic, and data layers
 
+## API Reference
+
+**OpenAPI Specification**
+- **ALWAYS reference `openapi.json`** when working with API models and endpoints
+- The OpenAPI spec defines the complete backend API contract
+- Use this as the source of truth for:
+  - Data models and their structure
+  - API endpoint paths and methods
+  - Request/response schemas
+  - Enum values and validation rules
+- Update models when API spec changes: `make update-openapi`
+
 ## Development Commands
+
+### API Management
+- `make update-openapi` - Fetch latest OpenAPI spec from local backend (http://localhost:8000)
+- Requires backend server running on localhost:8000
 
 ### Building and Running
 - `flutter run` - Run the app in debug mode (hot reload enabled)
@@ -78,6 +94,55 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Bad: HTTP requests without timeout (can hang indefinitely)
 - Use custom timeouts for specific endpoints if needed
 
+## Theming System
+
+**Architecture**: DesignConstants + Material 3 ColorScheme + Custom Widgets
+
+**DesignConstants** (`lib/shared/themes/design_constants.dart`)
+- Single source of truth for all design values
+- Colors: primary, secondary, background, text, and opacity variations
+- Design values: defaultRadius (16), buttonBorderSize (3)
+- Can be inherited for theme variations (e.g., light theme, brand variations)
+
+**AppTheme** (`lib/shared/themes/app_theme.dart`)
+- ThemeData configuration with Material 3 enabled
+- ColorScheme references DesignConstants for consistency
+- Pre-configured component themes (buttons, inputs, cards)
+
+**Usage in Widgets**:
+```dart
+import 'package:squillo/shared/themes/design_constants.dart';
+
+// Access colors and design values directly
+Container(
+  color: DesignConstants.primary,
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(DesignConstants.defaultRadius),
+    border: Border.all(
+      color: DesignConstants.buttonStroke,
+      width: DesignConstants.buttonBorderSize,
+    ),
+  ),
+)
+
+// Material widgets are auto-themed via ColorScheme
+ElevatedButton(...) // Uses DesignConstants.primary automatically
+Text(...) // Uses DesignConstants.text automatically
+```
+
+**Theme Variations**: Inherit from DesignConstants and override specific values
+```dart
+class LightDesignConstants extends DesignConstants {
+  static const Color background = Color(0xFFFFFFFF);
+  static const Color text = Color(0xFF000000);
+  // Inherit other values, override only what changes
+}
+```
+
+**Custom Widget Components**: Build reusable components in `lib/shared/widgets/`
+- Use DesignConstants for specific styling needs
+- Example: PrimaryButton, SecondaryButton, CustomCard
+
 ## Project Structure
 
 **Domain-Driven Architecture with Bloc**
@@ -109,6 +174,8 @@ lib/
 └── shared/                      # Shared widgets, themes
     ├── widgets/
     └── themes/
+        ├── design_constants.dart  # Design system constants
+        └── app_theme.dart         # Theme configuration
 ```
 
 **Why Domain-Driven**

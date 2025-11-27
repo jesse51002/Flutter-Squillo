@@ -1,0 +1,1068 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FastAPI Squillo",
+    "description": "FastAPI application with LLM service integration",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/v1/import": {
+      "post": {
+        "summary": "Import recipe from any supported platform",
+        "description": "Automatically detects platform (TikTok, YouTube, Instagram, or recipe website) and extracts recipe",
+        "operationId": "import_recipe_v1_import_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/database/create-user": {
+      "post": {
+        "tags": [
+          "database"
+        ],
+        "summary": "Create a new user",
+        "description": "Creates a new user in the database",
+        "operationId": "create_user_v1_database_create_user_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserCreateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/database/users/{user_id}": {
+      "get": {
+        "tags": [
+          "database"
+        ],
+        "summary": "Get user by ID",
+        "description": "Retrieves a user's information by their ID",
+        "operationId": "get_user_v1_database_users__user_id__get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/database/users/{user_id}/recipes": {
+      "get": {
+        "tags": [
+          "database"
+        ],
+        "summary": "Get all recipes for user",
+        "description": "Retrieves all recipes belonging to a user",
+        "operationId": "get_user_recipes_v1_database_users__user_id__recipes_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RecipeDisplayData"
+                  },
+                  "title": "Response Get User Recipes V1 Database Users  User Id  Recipes Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/database/recipes/{recipe_id}": {
+      "get": {
+        "tags": [
+          "database"
+        ],
+        "summary": "Get recipe by ID",
+        "description": "Retrieves a specific recipe's full details by its ID",
+        "operationId": "get_recipe_v1_database_recipes__recipe_id__get",
+        "parameters": [
+          {
+            "name": "recipe_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Recipe Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoredRecipe"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/educational-engine/recommend": {
+      "post": {
+        "tags": [
+          "educational-engine"
+        ],
+        "summary": "Get technique recommendation for recipe step",
+        "description": "Returns a recommended technique for a user based on their recipe step and learning history. Prioritizes unwatched techniques.",
+        "operationId": "get_technique_recommendation_v1_educational_engine_recommend_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TechniqueRecommendationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TechniqueRecommendationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/educational-engine/mark-watched": {
+      "post": {
+        "tags": [
+          "educational-engine"
+        ],
+        "summary": "Mark technique as watched",
+        "description": "Records a watch session for a technique video, including watch percentage and timestamp.",
+        "operationId": "mark_technique_watched_v1_educational_engine_mark_watched_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkTechniqueWatchedRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkTechniqueWatchedResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/educational-engine/learned_techniques/{user_id}": {
+      "get": {
+        "tags": [
+          "educational-engine"
+        ],
+        "summary": "Get learned techniques for a user",
+        "description": "Get list of watched techniques ids for a user",
+        "operationId": "learned_techniques_v1_educational_engine_learned_techniques__user_id__get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TechniquesWatchedResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Root",
+        "description": "Root endpoint for health check.\n\nReturns:\n    dict: Basic application information",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health Check",
+        "description": "Health check endpoint.\n\nReturns:\n    dict: Health status",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ExtractionIngredient": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Name of the ingredient"
+          },
+          "quantity": {
+            "type": "string",
+            "title": "Quantity",
+            "description": "Amount of the ingredient (e.g., '2', '1/2', '3-4', or empty if not specified)",
+            "default": ""
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit",
+            "description": "Unit of measurement (e.g., 'cups', 'tablespoons', 'grams', 'whole', 'to taste', 'handful', or empty if not specified)",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "ExtractionIngredient",
+        "description": "A single ingredient with quantity and unit."
+      },
+      "ExtractionRecipeStep": {
+        "properties": {
+          "step_number": {
+            "type": "string",
+            "title": "Step Number",
+            "description": "The sequential number of this step (supports decimals like 1.1, 1.2 for sub-steps)"
+          },
+          "instruction": {
+            "type": "string",
+            "title": "Instruction",
+            "description": "The instruction text for this step"
+          },
+          "techniques": {
+            "items": {
+              "$ref": "#/components/schemas/ExtractionTechniqueInfo"
+            },
+            "type": "array",
+            "title": "Techniques",
+            "description": "List of cooking techniques used in this step with relevance and importance ratings"
+          },
+          "estimated_time": {
+            "type": "number",
+            "title": "Estimated Time",
+            "description": "The estimated amount of time the step will take in minutes (decimals allowed)"
+          },
+          "is_active_step": {
+            "type": "boolean",
+            "title": "Is Active Step",
+            "description": "Whether it is an active step (doing) or a passive step (waiting)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "step_number",
+          "instruction",
+          "estimated_time",
+          "is_active_step"
+        ],
+        "title": "ExtractionRecipeStep",
+        "description": "A single step in a recipe with associated cooking techniques."
+      },
+      "ExtractionTechniqueInfo": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "ID of the chosen technique"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Name of technique chosen"
+          },
+          "importance": {
+            "$ref": "#/components/schemas/TechniqueImportance",
+            "description": "Technique Importance"
+          },
+          "difficulty": {
+            "$ref": "#/components/schemas/TechniqueDifficulty",
+            "description": "Techinque difficulty (leave empty in llm call)",
+            "default": 2
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "importance"
+        ],
+        "title": "ExtractionTechniqueInfo"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ImportRequest": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url",
+            "description": "URL from any supported platform (TikTok, YouTube, Instagram, or recipe website)"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id",
+            "description": "User ID for saving the recipe (if provided, recipe will be saved)"
+          },
+          "mock": {
+            "type": "boolean",
+            "title": "Mock",
+            "description": "If True, uses mock data instead of real API calls",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "ImportRequest",
+        "description": "Request model for recipe import (used by all platforms)."
+      },
+      "ImportResponse": {
+        "properties": {
+          "recipe": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecipeDisplayData"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Extracted recipe in markdown format"
+          },
+          "no_recipe_found": {
+            "type": "boolean",
+            "title": "No Recipe Found",
+            "description": "Whether or not a recipe was found in the video"
+          }
+        },
+        "type": "object",
+        "required": [
+          "recipe",
+          "no_recipe_found"
+        ],
+        "title": "ImportResponse",
+        "description": "Response model for recipe import (used by all platforms)."
+      },
+      "MarkTechniqueWatchedRequest": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "Unique identifier for the user"
+          },
+          "technique_id": {
+            "type": "string",
+            "title": "Technique Id",
+            "description": "Unique identifier for the technique"
+          },
+          "watched_percentage": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Watched Percentage",
+            "description": "Percentage of the video watched (0-100)"
+          },
+          "skipped": {
+            "type": "boolean",
+            "title": "Skipped",
+            "description": "Whether the technique video was skipped",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "technique_id",
+          "watched_percentage"
+        ],
+        "title": "MarkTechniqueWatchedRequest",
+        "description": "Request schema for marking a technique as watched."
+      },
+      "MarkTechniqueWatchedResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "description": "Whether the operation succeeded"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "Success or error message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success",
+          "message"
+        ],
+        "title": "MarkTechniqueWatchedResponse",
+        "description": "Response schema for marking technique as watched."
+      },
+      "RecipeDifficulty": {
+        "type": "integer",
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "title": "RecipeDifficulty"
+      },
+      "RecipeDisplayData": {
+        "properties": {
+          "recipe_id": {
+            "type": "string",
+            "title": "Recipe Id",
+            "description": "Unique identifier for the recipe"
+          },
+          "recipe_name": {
+            "type": "string",
+            "title": "Recipe Name",
+            "description": "Name of the recipe"
+          },
+          "thumbnail_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thumbnail Url",
+            "description": "URL to the recipe thumbnail image"
+          },
+          "difficulty": {
+            "$ref": "#/components/schemas/RecipeDifficulty",
+            "description": "Overall recipe difficulty based on the most difficult technique used"
+          },
+          "technique_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Technique Ids",
+            "description": "List of technique IDs used in this recipe"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At",
+            "description": "Recipe creation time"
+          }
+        },
+        "type": "object",
+        "required": [
+          "recipe_id",
+          "recipe_name",
+          "difficulty",
+          "created_at"
+        ],
+        "title": "RecipeDisplayData",
+        "description": "Lightweight recipe schema for displaying recipe summaries in lists.\n\nContains only the essential information needed to display a recipe card\nor list item, without the full recipe details."
+      },
+      "SimplifiedTechnique": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Technique ID"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Technique name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "Technique description"
+          },
+          "video_url": {
+            "type": "string",
+            "title": "Video Url",
+            "description": "Technique video URL"
+          },
+          "image": {
+            "type": "string",
+            "title": "Image",
+            "description": "Base technique image"
+          },
+          "badge_image": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Badge Image",
+            "description": "Technique badge image"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "description",
+          "video_url",
+          "image"
+        ],
+        "title": "SimplifiedTechnique",
+        "description": "Simplified technique information for recommendations."
+      },
+      "StoredRecipe": {
+        "properties": {
+          "recipe_name": {
+            "type": "string",
+            "title": "Recipe Name",
+            "description": "Name of the recipe"
+          },
+          "ingredients": {
+            "items": {
+              "$ref": "#/components/schemas/ExtractionIngredient"
+            },
+            "type": "array",
+            "title": "Ingredients",
+            "description": "List of ingredients needed for the recipe"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/ExtractionRecipeStep"
+            },
+            "type": "array",
+            "title": "Steps",
+            "description": "List of recipe steps with techniques"
+          },
+          "difficulty": {
+            "$ref": "#/components/schemas/RecipeDifficulty",
+            "description": "Difficulty of recipe (1-3)"
+          },
+          "servings": {
+            "type": "integer",
+            "title": "Servings",
+            "description": "How many servings this recipe has"
+          },
+          "active_time": {
+            "type": "number",
+            "title": "Active Time",
+            "description": "Total active time for the recipe in minutes (leave empty in llm call)",
+            "default": 0.0
+          },
+          "total_time": {
+            "type": "number",
+            "title": "Total Time",
+            "description": "Total time for the recipe in minutes (leave empty in llm call)",
+            "default": 0.0
+          },
+          "recipe_id": {
+            "type": "string",
+            "title": "Recipe Id",
+            "description": "Unique identifier for the recipe"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "ID of the user who owns this recipe"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url",
+            "description": "Original URL where the recipe was imported from"
+          },
+          "thumbnail_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thumbnail Url",
+            "description": "URL to the recipe thumbnail image",
+            "default": "https://plus.unsplash.com/premium_photo-1694547926001-f2151e4a476b?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Zm9vZCUyMHBob3RvZ3JhcGh5fGVufDB8fDB8fHww"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At",
+            "description": "Recipe creation time"
+          }
+        },
+        "type": "object",
+        "required": [
+          "recipe_name",
+          "ingredients",
+          "steps",
+          "difficulty",
+          "servings",
+          "recipe_id",
+          "user_id"
+        ],
+        "title": "StoredRecipe",
+        "description": "Recipe schema that extends TechniqueExtractionResponse with storage metadata.\n\nThis schema inherits all fields from TechniqueExtractionResponse:\n- recipe_name: str\n- ingredients: list[ExtractionIngredient]\n- steps: list[ExtractionRecipeStep]\n- status: str\n\nAnd adds storage-specific fields for tracking and user association."
+      },
+      "TechniqueDifficulty": {
+        "type": "integer",
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "title": "TechniqueDifficulty"
+      },
+      "TechniqueImportance": {
+        "type": "integer",
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "title": "TechniqueImportance"
+      },
+      "TechniqueRecommendationRequest": {
+        "properties": {
+          "recipe_id": {
+            "type": "string",
+            "title": "Recipe Id",
+            "description": "Unique identifier for the recipe"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "Unique identifier for the user"
+          },
+          "step_number": {
+            "type": "string",
+            "title": "Step Number",
+            "description": "Step number in the recipe (can be decimal like 1.1)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "recipe_id",
+          "user_id",
+          "step_number"
+        ],
+        "title": "TechniqueRecommendationRequest",
+        "description": "Request schema for getting technique recommendation."
+      },
+      "TechniqueRecommendationResponse": {
+        "properties": {
+          "technique": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SimplifiedTechnique"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Recommended technique for the step. None if step has no techniques."
+          },
+          "prerequisite": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SimplifiedTechnique"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Prerequisite technique that should be watched first. None if no prerequisite exists."
+          },
+          "already_watched": {
+            "type": "boolean",
+            "title": "Already Watched",
+            "description": "True if the recommended technique was already watched by the user. Indicates all techniques in this step have been watched.",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "TechniqueRecommendationResponse",
+        "description": "Response schema for technique recommendation.\n\nReturns a recommended technique for the user based on the recipe step\nand their learning history."
+      },
+      "TechniquesWatchedResponse": {
+        "properties": {
+          "techniques": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Techniques",
+            "description": "List of watched techniques"
+          }
+        },
+        "type": "object",
+        "required": [
+          "techniques"
+        ],
+        "title": "TechniquesWatchedResponse",
+        "description": "Response schema for listing watched techniques."
+      },
+      "UserCreate": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "Unique identifier for the user"
+          },
+          "username": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Username",
+            "description": "Username for the user"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+            "description": "Email address for the user"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "username",
+          "email"
+        ],
+        "title": "UserCreate",
+        "description": "Request schema for creating a new user."
+      },
+      "UserCreateResponse": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "Unique identifier for the created user"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username",
+            "description": "Username for the created user"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+            "description": "Email address for the created user"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At",
+            "description": "Timestamp when the user was created"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "username",
+          "email",
+          "created_at"
+        ],
+        "title": "UserCreateResponse",
+        "description": "Response schema for user creation operations."
+      },
+      "UserResponse": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "Unique identifier for the user"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username",
+            "description": "Username for the user"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+            "description": "Email address for the user"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At",
+            "description": "Timestamp when the user was created"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "username",
+          "email",
+          "created_at"
+        ],
+        "title": "UserResponse",
+        "description": "Response schema for user operations."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
