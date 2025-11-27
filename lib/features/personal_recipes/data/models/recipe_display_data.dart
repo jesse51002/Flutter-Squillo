@@ -70,11 +70,11 @@ class RecipeDisplayData extends Equatable {
 
   @override
   List<Object?> get props => [
-        recipeId,
-        recipeName,
-        thumbnailUrl,
-        difficulty,
-        techniqueIds,
-        createdAt,
-      ];
+    recipeId,
+    recipeName,
+    thumbnailUrl,
+    difficulty,
+    techniqueIds,
+    createdAt,
+  ];
 }

@@ -17,7 +17,7 @@ class PersonalRecipesBloc
 
   /// Creates a [PersonalRecipesBloc] with the given [repository].
   PersonalRecipesBloc({required this.repository})
-      : super(const PersonalRecipesInitial()) {
+    : super(const PersonalRecipesInitial()) {
     on<LoadRecipesRequested>(_onLoadRecipesRequested);
     on<SearchRecipesRequested>(_onSearchRecipesRequested);
     on<RefreshRecipesRequested>(_onRefreshRecipesRequested);
@@ -35,34 +35,26 @@ class PersonalRecipesBloc
         AppConstants.kDefaultUserId,
       );
 
-      emit(PersonalRecipesLoaded(
-        recipes: recipes,
-        filteredRecipes: recipes,
-        searchQuery: '',
-      ));
-    } on NetworkException catch (e, stackTrace) {
-      log(
-        'Network error loading recipes',
-        error: e,
-        stackTrace: stackTrace,
+      emit(
+        PersonalRecipesLoaded(
+          recipes: recipes,
+          filteredRecipes: recipes,
+          searchQuery: '',
+        ),
       );
+    } on NetworkException catch (e, stackTrace) {
+      log('Network error loading recipes', error: e, stackTrace: stackTrace);
       emit(PersonalRecipesError(e.message));
     } on ServerException catch (e, stackTrace) {
-      log(
-        'Server error loading recipes',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      log('Server error loading recipes', error: e, stackTrace: stackTrace);
       emit(PersonalRecipesError(e.message));
     } catch (e, stackTrace) {
-      log(
-        'Unexpected error loading recipes',
-        error: e,
-        stackTrace: stackTrace,
+      log('Unexpected error loading recipes', error: e, stackTrace: stackTrace);
+      emit(
+        const PersonalRecipesError(
+          'An unexpected error occurred. Please try again.',
+        ),
       );
-      emit(const PersonalRecipesError(
-        'An unexpected error occurred. Please try again.',
-      ));
     }
   }
 
@@ -77,21 +69,21 @@ class PersonalRecipesBloc
 
       if (query.isEmpty) {
         // No search query, show all recipes
-        emit(currentState.copyWith(
-          filteredRecipes: currentState.recipes,
-          searchQuery: '',
-        ));
+        emit(
+          currentState.copyWith(
+            filteredRecipes: currentState.recipes,
+            searchQuery: '',
+          ),
+        );
       } else {
         // Filter recipes by name
         final filtered = currentState.recipes
-            .where((recipe) =>
-                recipe.recipeName.toLowerCase().contains(query))
+            .where((recipe) => recipe.recipeName.toLowerCase().contains(query))
             .toList();
 
-        emit(currentState.copyWith(
-          filteredRecipes: filtered,
-          searchQuery: query,
-        ));
+        emit(
+          currentState.copyWith(filteredRecipes: filtered, searchQuery: query),
+        );
       }
     }
   }
@@ -107,24 +99,18 @@ class PersonalRecipesBloc
         AppConstants.kDefaultUserId,
       );
 
-      emit(PersonalRecipesLoaded(
-        recipes: recipes,
-        filteredRecipes: recipes,
-        searchQuery: '',
-      ));
-    } on NetworkException catch (e, stackTrace) {
-      log(
-        'Network error refreshing recipes',
-        error: e,
-        stackTrace: stackTrace,
+      emit(
+        PersonalRecipesLoaded(
+          recipes: recipes,
+          filteredRecipes: recipes,
+          searchQuery: '',
+        ),
       );
+    } on NetworkException catch (e, stackTrace) {
+      log('Network error refreshing recipes', error: e, stackTrace: stackTrace);
       emit(PersonalRecipesError(e.message));
     } on ServerException catch (e, stackTrace) {
-      log(
-        'Server error refreshing recipes',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      log('Server error refreshing recipes', error: e, stackTrace: stackTrace);
       emit(PersonalRecipesError(e.message));
     } catch (e, stackTrace) {
       log(
@@ -132,9 +118,11 @@ class PersonalRecipesBloc
         error: e,
         stackTrace: stackTrace,
       );
-      emit(const PersonalRecipesError(
-        'An unexpected error occurred. Please try again.',
-      ));
+      emit(
+        const PersonalRecipesError(
+          'An unexpected error occurred. Please try again.',
+        ),
+      );
     }
   }
 }

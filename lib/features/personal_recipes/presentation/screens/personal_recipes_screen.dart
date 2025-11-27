@@ -51,10 +51,7 @@ class PersonalRecipesScreen extends StatelessWidget {
           // App bar - centered
           SliverToBoxAdapter(
             child: Center(
-              child: Text(
-                'your recipes',
-                style: DesignConstants.h1,
-              ),
+              child: Text('your recipes', style: DesignConstants.h1),
             ),
           ),
 
@@ -64,9 +61,9 @@ class PersonalRecipesScreen extends StatelessWidget {
           SliverToBoxAdapter(
             child: RecipesSearchBar(
               onSearchChanged: (query) {
-                context
-                    .read<PersonalRecipesBloc>()
-                    .add(SearchRecipesRequested(query));
+                context.read<PersonalRecipesBloc>().add(
+                  SearchRecipesRequested(query),
+                );
               },
             ),
           ),
@@ -74,16 +71,12 @@ class PersonalRecipesScreen extends StatelessWidget {
           const SliverToBoxAdapter(child: SizedBox(height: 32)),
 
           // Import card
-          const SliverToBoxAdapter(
-            child: ImportCard(),
-          ),
+          const SliverToBoxAdapter(child: ImportCard()),
 
           const SliverToBoxAdapter(child: SizedBox(height: 32)),
 
           // Difficulty legend section with header
-          SliverToBoxAdapter(
-            child: DifficultyIndicator.buildLegendSection(),
-          ),
+          SliverToBoxAdapter(child: DifficultyIndicator.buildLegendSection()),
 
           const SliverToBoxAdapter(child: SizedBox(height: 48)),
 
@@ -122,9 +115,9 @@ class PersonalRecipesScreen extends StatelessWidget {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
-                context
-                    .read<PersonalRecipesBloc>()
-                    .add(const LoadRecipesRequested());
+                context.read<PersonalRecipesBloc>().add(
+                  const LoadRecipesRequested(),
+                );
               },
               child: Text('Retry', style: DesignConstants.h3),
             ),

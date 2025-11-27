@@ -29,16 +29,9 @@ class DifficultyIndicator extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              'assets/icons/chef_hat.png',
-              width: 16,
-              height: 16,
-            ),
+            Image.asset('assets/icons/chef_hat.png', width: 16, height: 16),
             const SizedBox(width: 8),
-            Text(
-              'new techniques ',
-              style: DesignConstants.h3,
-            ),
+            Text('new techniques ', style: DesignConstants.h3),
           ],
         ),
         const SizedBox(height: 4),
@@ -70,10 +63,7 @@ class DifficultyIndicator extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        Text(
-          difficulty.displayName,
-          style: DesignConstants.h3,
-        ),
+        Text(difficulty.displayName, style: DesignConstants.h3),
       ],
     );
   }

@@ -13,11 +13,7 @@ class RecipeCard extends StatelessWidget {
   /// Callback when the card is tapped
   final VoidCallback? onTap;
 
-  const RecipeCard({
-    super.key,
-    required this.recipe,
-    this.onTap,
-  });
+  const RecipeCard({super.key, required this.recipe, this.onTap});
 
   /// Gets the difficulty enum from the recipe.
   Difficulty get _difficulty => Difficulty.fromValue(recipe.difficulty);
@@ -25,12 +21,11 @@ class RecipeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap ??
+      onTap:
+          onTap ??
           () {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Viewing ${recipe.recipeName}'),
-              ),
+              SnackBar(content: Text('Viewing ${recipe.recipeName}')),
             );
           },
       child: Column(
@@ -44,16 +39,18 @@ class RecipeCard extends StatelessWidget {
                 // Main card container
                 Container(
                   decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(DesignConstants.cardRadius),
+                    borderRadius: BorderRadius.circular(
+                      DesignConstants.cardRadius,
+                    ),
                     border: Border.all(
                       color: Colors.white,
                       width: DesignConstants.cardBorderSize,
                     ),
                   ),
                   child: ClipRRect(
-                    borderRadius:
-                        BorderRadius.circular(DesignConstants.cardRadius),
+                    borderRadius: BorderRadius.circular(
+                      DesignConstants.cardRadius,
+                    ),
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
@@ -91,8 +88,9 @@ class RecipeCard extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: _difficulty.color,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(1000)),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(1000),
+                        ),
                         border: Border.all(
                           width: DesignConstants.cardBorderSize,
                           color: Colors.white,
@@ -148,11 +146,7 @@ class RecipeCard extends StatelessWidget {
     return Container(
       color: DesignConstants.buttonStroke,
       child: const Center(
-        child: Icon(
-          Icons.restaurant,
-          size: 48,
-          color: DesignConstants.text,
-        ),
+        child: Icon(Icons.restaurant, size: 48, color: DesignConstants.text),
       ),
     );
   }

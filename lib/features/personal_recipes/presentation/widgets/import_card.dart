@@ -8,10 +8,7 @@ class ImportCard extends StatelessWidget {
   /// Callback when the import button is tapped
   final VoidCallback? onImportTap;
 
-  const ImportCard({
-    super.key,
-    this.onImportTap,
-  });
+  const ImportCard({super.key, this.onImportTap});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +48,8 @@ class ImportCard extends StatelessWidget {
                     child: FractionallySizedBox(
                       widthFactor: 0.8,
                       child: ElevatedButton(
-                        onPressed: onImportTap ??
+                        onPressed:
+                            onImportTap ??
                             () {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -66,11 +64,8 @@ class ImportCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10000),
                           ),
                         ),
-                        child: Text(
-                          'import',
-                          style: DesignConstants.h3,
-                        ),
-                      )
+                        child: Text('import', style: DesignConstants.h3),
+                      ),
                     ),
                   ),
                 ],

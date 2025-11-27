@@ -29,21 +29,25 @@ class RecipesRemoteDataSourceImpl implements RecipesRemoteDataSource {
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data as List<dynamic>;
         return data
-            .map((json) => RecipeDisplayData.fromJson(json as Map<String, dynamic>))
+            .map(
+              (json) =>
+                  RecipeDisplayData.fromJson(json as Map<String, dynamic>),
+            )
             .toList();
       } else {
-        throw ServerException(
-          'Failed to fetch recipes',
-          response.statusCode,
-        );
+        throw ServerException('Failed to fetch recipes', response.statusCode);
       }
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.receiveTimeout ||
           e.type == DioExceptionType.sendTimeout) {
-        throw const NetworkException('Request timeout. Please check your connection.');
+        throw const NetworkException(
+          'Request timeout. Please check your connection.',
+        );
       } else if (e.type == DioExceptionType.connectionError) {
-        throw const NetworkException('No internet connection. Please check your network.');
+        throw const NetworkException(
+          'No internet connection. Please check your network.',
+        );
       } else if (e.response != null) {
         throw ServerException(
           e.response?.data?['message'] ?? 'Server error occurred',

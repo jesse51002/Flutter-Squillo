@@ -9,10 +9,7 @@ class RecipesSearchBar extends StatefulWidget {
   /// Callback when the search query changes
   final ValueChanged<String> onSearchChanged;
 
-  const RecipesSearchBar({
-    super.key,
-    required this.onSearchChanged,
-  });
+  const RecipesSearchBar({super.key, required this.onSearchChanged});
 
   @override
   State<RecipesSearchBar> createState() => _RecipesSearchBarState();
@@ -30,16 +27,14 @@ class _RecipesSearchBarState extends State<RecipesSearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(  
+    return SizedBox(
       height: 40,
       child: Stack(
         alignment: Alignment.centerLeft,
         children: [
           TextField(
             onChanged: _handleTextChanged,
-            style: const TextStyle(
-              color: DesignConstants.text,
-            ),
+            style: const TextStyle(color: DesignConstants.text),
             textAlign: TextAlign.center,
             textAlignVertical: TextAlignVertical.center,
             decoration: InputDecoration(
@@ -52,24 +47,27 @@ class _RecipesSearchBarState extends State<RecipesSearchBar> {
               fillColor: DesignConstants.background,
               suffixIcon: const SizedBox.shrink(),
               border: OutlineInputBorder(
-                borderRadius:
-                    BorderRadius.circular(DesignConstants.buttonRadius),
+                borderRadius: BorderRadius.circular(
+                  DesignConstants.buttonRadius,
+                ),
                 borderSide: const BorderSide(
                   color: DesignConstants.buttonStroke,
                   width: DesignConstants.buttonBorderSize,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius:
-                    BorderRadius.circular(DesignConstants.buttonRadius),
+                borderRadius: BorderRadius.circular(
+                  DesignConstants.buttonRadius,
+                ),
                 borderSide: const BorderSide(
                   color: DesignConstants.buttonStroke,
                   width: DesignConstants.buttonBorderSize,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius:
-                    BorderRadius.circular(DesignConstants.buttonRadius),
+                borderRadius: BorderRadius.circular(
+                  DesignConstants.buttonRadius,
+                ),
                 borderSide: const BorderSide(
                   color: DesignConstants.primary,
                   width: DesignConstants.buttonBorderSize,
@@ -92,7 +90,7 @@ class _RecipesSearchBarState extends State<RecipesSearchBar> {
               ),
             ),
         ],
-      )
+      ),
     );
   }
 }

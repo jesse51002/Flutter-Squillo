@@ -26,9 +26,7 @@ class RecipeGrid {
                 ? 'No recipes yet!\nTap import to add your first recipe.'
                 : 'No recipes found for "$searchQuery"',
             textAlign: TextAlign.center,
-            style: DesignConstants.h3.copyWith(
-              color: DesignConstants.textHalf,
-            ),
+            style: DesignConstants.h3.copyWith(color: DesignConstants.textHalf),
           ),
         ),
       );
@@ -41,13 +39,10 @@ class RecipeGrid {
         crossAxisSpacing: 24,
         childAspectRatio: 0.9,
       ),
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          final recipe = recipes[index];
-          return RecipeCard(recipe: recipe);
-        },
-        childCount: recipes.length,
-      ),
+      delegate: SliverChildBuilderDelegate((context, index) {
+        final recipe = recipes[index];
+        return RecipeCard(recipe: recipe);
+      }, childCount: recipes.length),
     );
   }
 }

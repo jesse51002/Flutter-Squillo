@@ -11,11 +11,7 @@ class TechniqueCountBadge extends StatelessWidget {
   /// Optional size for the badge (default: 32)
   final double size;
 
-  const TechniqueCountBadge({
-    super.key,
-    required this.count,
-    this.size = 32,
-  });
+  const TechniqueCountBadge({super.key, required this.count, this.size = 32});
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +23,7 @@ class TechniqueCountBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: DesignConstants.background.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(size / 2),
-        border: Border.all(
-          color: DesignConstants.primary,
-          width: 1.5,
-        ),
+        border: Border.all(color: DesignConstants.primary, width: 1.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
