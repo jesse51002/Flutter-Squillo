@@ -36,7 +36,8 @@ class _PersonalRecipesScreenState extends State<PersonalRecipesScreen> {
         child: BlocBuilder<PersonalRecipesBloc, PersonalRecipesState>(
           builder: (context, state) {
             return switch (state) {
-              PersonalRecipesInitial() || PersonalRecipesLoading() => const LoadingIndicator(),
+              PersonalRecipesInitial() ||
+              PersonalRecipesLoading() => const LoadingIndicator(),
               PersonalRecipesLoaded() => _buildLoaded(context, state),
               PersonalRecipesError() => _buildError(context, state),
             };
