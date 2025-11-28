@@ -23,36 +23,27 @@ class RecipesSearchBar extends StatelessWidget {
         textInputAction: TextInputAction.search,
         decoration: InputDecoration(
           hintText: 'search bar',
-          hintStyle: TextStyle(
-            color: DesignConstants.textHalf,
-            height: 1.0,
-          ),
+          hintStyle: TextStyle(color: DesignConstants.textHalf, height: 1.0),
           filled: false,
           fillColor: DesignConstants.background,
           contentPadding: const EdgeInsets.symmetric(vertical: 10),
           isDense: true,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(
-              DesignConstants.buttonRadius,
-            ),
+            borderRadius: BorderRadius.circular(DesignConstants.buttonRadius),
             borderSide: const BorderSide(
               color: DesignConstants.buttonStroke,
               width: DesignConstants.buttonBorderSize,
             ),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(
-              DesignConstants.buttonRadius,
-            ),
+            borderRadius: BorderRadius.circular(DesignConstants.buttonRadius),
             borderSide: const BorderSide(
               color: DesignConstants.buttonStroke,
               width: DesignConstants.buttonBorderSize,
             ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(
-              DesignConstants.buttonRadius,
-            ),
+            borderRadius: BorderRadius.circular(DesignConstants.buttonRadius),
             borderSide: const BorderSide(
               color: DesignConstants.primary,
               width: DesignConstants.buttonBorderSize,
