@@ -70,10 +70,11 @@ class PersonalRecipesScreen extends StatelessWidget {
 
           const SliverToBoxAdapter(child: SizedBox(height: 32)),
 
-          // Import card
-          const SliverToBoxAdapter(child: ImportCard()),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 32)),
+          // Import card - only show when not searching
+          if (state.searchQuery.isEmpty) ...[
+            const SliverToBoxAdapter(child: ImportCard()),
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+          ],
 
           // Difficulty legend section with header
           SliverToBoxAdapter(child: DifficultyIndicator.buildLegendSection()),

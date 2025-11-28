@@ -46,32 +46,25 @@ class RecipeCard extends StatelessWidget {
                       color: Colors.white,
                       width: DesignConstants.cardBorderSize,
                     ),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                      DesignConstants.cardRadius,
-                    ),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        // Background image
-                        if (recipe.thumbnailUrl != null)
-                          Image.network(
-                            recipe.thumbnailUrl!,
+                    image: recipe.thumbnailUrl != null
+                        ? DecorationImage(
+                            image: NetworkImage(recipe.thumbnailUrl!),
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return _buildPlaceholder();
-                            },
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return _buildPlaceholder();
-                            },
                           )
-                        else
-                          _buildPlaceholder(),
-                      ],
-                    ),
+                        : null,
+                    color: recipe.thumbnailUrl == null
+                        ? DesignConstants.buttonStroke
+                        : null,
                   ),
+                  child: recipe.thumbnailUrl == null
+                      ? const Center(
+                          child: Icon(
+                            Icons.restaurant,
+                            size: 48,
+                            color: DesignConstants.text,
+                          ),
+                        )
+                      : null,
                 ),
 
                 // Top center: Technique count badge in pill cutout
@@ -137,16 +130,6 @@ class RecipeCard extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  /// Builds a placeholder widget when image is not available or loading.
-  Widget _buildPlaceholder() {
-    return Container(
-      color: DesignConstants.buttonStroke,
-      child: const Center(
-        child: Icon(Icons.restaurant, size: 48, color: DesignConstants.text),
       ),
     );
   }
