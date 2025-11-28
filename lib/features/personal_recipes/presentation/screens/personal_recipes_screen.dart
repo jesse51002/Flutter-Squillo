@@ -13,8 +13,20 @@ import 'package:squillo/shared/widgets/loading_indicator.dart';
 /// Main screen for displaying personal recipes.
 ///
 /// Shows a search bar, import card, and grid of recipe cards.
-class PersonalRecipesScreen extends StatelessWidget {
+class PersonalRecipesScreen extends StatefulWidget {
   const PersonalRecipesScreen({super.key});
+
+  @override
+  State<PersonalRecipesScreen> createState() => _PersonalRecipesScreenState();
+}
+
+class _PersonalRecipesScreenState extends State<PersonalRecipesScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Trigger loading when the screen initializes
+    context.read<PersonalRecipesBloc>().add(const LoadRecipesRequested());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +36,7 @@ class PersonalRecipesScreen extends StatelessWidget {
         child: BlocBuilder<PersonalRecipesBloc, PersonalRecipesState>(
           builder: (context, state) {
             return switch (state) {
-              PersonalRecipesInitial() => _buildInitial(context),
-              PersonalRecipesLoading() => const LoadingIndicator(),
+              PersonalRecipesInitial() || PersonalRecipesLoading() => const LoadingIndicator(),
               PersonalRecipesLoaded() => _buildLoaded(context, state),
               PersonalRecipesError() => _buildError(context, state),
             };
@@ -33,13 +44,6 @@ class PersonalRecipesScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  /// Builds the initial state - triggers loading.
-  Widget _buildInitial(BuildContext context) {
-    // Trigger loading on first build
-    context.read<PersonalRecipesBloc>().add(const LoadRecipesRequested());
-    return const LoadingIndicator();
   }
 
   /// Builds the loaded state with recipes.
@@ -93,7 +97,6 @@ class PersonalRecipesScreen extends StatelessWidget {
     );
   }
 
-  /// Builds a difficulty legend item.
   /// Builds the error state.
   Widget _buildError(BuildContext context, PersonalRecipesError state) {
     return Center(
