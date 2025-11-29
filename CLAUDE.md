@@ -79,7 +79,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Code Complexity & Nesting**
 - **Limit deep nesting**
 - **Extract methods when nesting gets complex** - create helper methods
-- Good: Extract nested logic into separate, well-named private methods
+- **Once nesting starts getting deep, separate it out**:
+  - Create a new function widget in the same file for related UI logic
+  - Move to a different file if the widget becomes reusable or substantial
+- Good: Extract nested logic into separate, well-named private methods or widgets
 - Bad: Deep nesting makes code hard to read and maintain
 
 **DateTime Handling**
@@ -93,6 +96,128 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Good: `dio.get(url, options: Options(receiveTimeout: Duration(seconds: 30)))`
 - Bad: HTTP requests without timeout (can hang indefinitely)
 - Use custom timeouts for specific endpoints if needed
+
+**Screen Layout**
+- **Use consistent horizontal padding** on all screens
+- Use `DesignConstants.screenHorizontalPadding` for all screen-level horizontal padding
+- Good: `Padding(padding: EdgeInsets.symmetric(horizontal: DesignConstants.screenHorizontalPadding))`
+- This ensures visual consistency across all screens in the app
+
+## Screen Architecture & Widget Separation
+
+**Screens as Widget Composition**
+- **Screens are collections of smaller, focused widgets** - not monolithic build methods
+- Break complex screens into logical sections (e.g., `IngredientsSection`, `TechniquesSection`, `InfoBadgesGrid`)
+- Each section widget has a single, clear responsibility
+- This improves readability, testability, and maintainability
+
+**Widget Separation Guidelines**
+- **When to extract to a separate widget file**:
+  - Widget becomes substantial (>50-100 lines)
+  - Widget is reusable across different screens or features
+  - Widget has complex internal state or logic
+  - Widget represents a distinct UI component (e.g., `TechniqueCard`, `IngredientCheckboxItem`)
+- **When to use private helper methods** (`_buildSection()`):
+  - Small UI pieces within the same screen (<30 lines)
+  - UI logic tightly coupled to the parent widget's state
+  - One-off UI elements not used elsewhere
+- **Widget file organization**:
+  - Feature-specific widgets → `features/[feature]/presentation/widgets/`
+  - Reusable components → `shared/widgets/`
+  - One widget per file for clarity
+
+**Widget Naming Conventions**
+- Use clear, descriptive names that indicate purpose
+- Section widgets: `[Content]Section` (e.g., `IngredientsSection`, `HeaderSection`)
+- Item widgets: `[Item]Card`, `[Item]Tile`, `[Item]Item` (e.g., `TechniqueCard`, `RecipeListTile`, `IngredientCheckboxItem`)
+- Grid/List widgets: `[Content]Grid`, `[Content]List` (e.g., `InfoBadgesGrid`, `RecipesList`)
+- Avoid generic names like `CustomWidget`, `MyWidget`, `WidgetOne`
+
+**BLoC Integration in Widgets**
+- **Widgets dispatch events to BLoC** - never call methods directly
+- **Widgets listen to state changes** - use `BlocBuilder`, `BlocListener`, `BlocConsumer`
+- **NO callbacks for business logic** - use BLoC events instead
+- Good: `context.read<RecipeDetailBloc>().add(ToggleIngredientChecked(index))`
+- Bad: Passing `onToggle: () { /* business logic */ }` callbacks through widget layers
+- Callbacks acceptable for: simple UI interactions (button onTap), form field onChange
+
+**Optimistic UI Updates Pattern**
+- For actions that sync with server (e.g., toggling checkboxes):
+  - Step 1: Update UI immediately (optimistic update)
+  - Step 2: Mark as syncing/loading (disable further interaction)
+  - Step 3: Send request to server
+  - Step 4: On success - clear loading state; On error - revert to previous state
+- Benefits: Immediate user feedback, better perceived performance
+- Implementation: Use state flags like `isSyncing`, `isLoading` in your models
+
+**Example Screen Structure**
+```dart
+class RecipeDetailScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<RecipeDetailBloc, RecipeDetailState>(
+      builder: (context, state) {
+        if (state is RecipeDetailLoading) {
+          return LoadingWidget();
+        }
+        if (state is RecipeDetailError) {
+          return ErrorWidget(message: state.message);
+        }
+        if (state is RecipeDetailLoaded) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                HeaderSection(recipe: state.recipe),
+                IngredientsSection(ingredients: state.ingredients),
+                TechniquesSection(techniques: state.simplifiedTechniques),
+                InfoBadgesGrid(recipe: state.recipe),
+              ],
+            ),
+          );
+        }
+        return Container();
+      },
+    );
+  }
+}
+
+// Separate file: ingredients_section.dart
+class IngredientsSection extends StatelessWidget {
+  final List<IngredientWithState> ingredients;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: ingredients.map((ing) =>
+        IngredientCheckboxItem(ingredientState: ing, index: i)
+      ).toList(),
+    );
+  }
+}
+
+// Separate file: ingredient_checkbox_item.dart
+class IngredientCheckboxItem extends StatelessWidget {
+  final IngredientWithState ingredientState;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        context.read<RecipeDetailBloc>().add(
+          ToggleIngredientChecked(index),
+        );
+      },
+      child: _buildCheckboxRow(),
+    );
+  }
+
+  Widget _buildCheckboxRow() {
+    // Small helper method for internal UI structure
+    return Row(...);
+  }
+}
+```
 
 ## Theming System
 
@@ -193,6 +318,13 @@ lib/
 - Use `Equatable` for Events and States
 - Use `sealed` classes for States when appropriate
 - Keep Blocs focused - split if handling too many concerns
+
+**Callbacks vs Bloc**
+- **Avoid callbacks unless extremely necessary** - use Bloc for state management instead
+- Good: Widget dispatches an event to Bloc, Bloc updates state, widget rebuilds
+- Bad: Passing callbacks through multiple widget layers for state changes
+- Callbacks are acceptable for: simple UI interactions (onTap on a button), form field changes
+- For business logic and state changes: ALWAYS use Bloc events
 
 **Bloc Best Practices**
 - **Never emit state in constructor** - use `on<Event>` handlers

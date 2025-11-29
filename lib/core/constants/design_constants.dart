@@ -65,6 +65,9 @@ class DesignConstants {
   /// Border width for card
   static const double cardBorderSize = 4.0;
 
+  /// Screen horizontal padding for consistency across screens
+  static const double screenHorizontalPadding = 24.0;
+
   // Typography
 
   /// Font family

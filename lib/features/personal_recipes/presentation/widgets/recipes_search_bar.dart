@@ -16,7 +16,7 @@ class RecipesSearchBar extends StatelessWidget {
       height: 40,
       child: TextField(
         onChanged: onSearchChanged,
-        style: const TextStyle(color: DesignConstants.text),
+        style: const TextStyle(color: DesignConstants.text, height: 1.0),
         textAlign: TextAlign.center,
         textAlignVertical: TextAlignVertical.center,
         keyboardType: TextInputType.text,

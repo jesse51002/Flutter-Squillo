@@ -50,13 +50,18 @@ class _PersonalRecipesScreenState extends State<PersonalRecipesScreen> {
   /// Builds the loaded state with recipes.
   Widget _buildLoaded(BuildContext context, PersonalRecipesLoaded state) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(
+        horizontal: DesignConstants.screenHorizontalPadding,
+      ),
       child: CustomScrollView(
         slivers: [
           // App bar - centered
           SliverToBoxAdapter(
             child: Center(
-              child: Text('your recipes', style: DesignConstants.h1),
+              child: Text(
+                'your recipes',
+                style: DesignConstants.h1.copyWith(height: 1),
+              ),
             ),
           ),
 
@@ -102,7 +107,7 @@ class _PersonalRecipesScreenState extends State<PersonalRecipesScreen> {
   Widget _buildError(BuildContext context, PersonalRecipesError state) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(DesignConstants.screenHorizontalPadding),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
