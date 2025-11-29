@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:squillo/core/constants/design_constants.dart';
 import 'package:squillo/core/constants/difficulty.dart';
 import 'package:squillo/features/personal_recipes/data/models/recipe_display_data.dart';
+import 'package:squillo/features/recipe_detail/presentation/screens/recipe_detail_screen.dart';
 
 /// Card widget for displaying a recipe in a grid.
 ///
@@ -24,8 +25,11 @@ class RecipeCard extends StatelessWidget {
       onTap:
           onTap ??
           () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Viewing ${recipe.recipeName}')),
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    RecipeDetailScreen(recipeId: recipe.recipeId),
+              ),
             );
           },
       child: Column(
@@ -69,46 +73,49 @@ class RecipeCard extends StatelessWidget {
 
                 // Top center: Technique count badge in pill cutout
                 Positioned(
-                  top: -20 + DesignConstants.cardBorderSize,
+                  top: DesignConstants.cardBorderSize / 2,
                   left: 0,
                   right: 0,
-                  child: Center(
-                    child: Container(
-                      height: 40,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 0,
-                      ),
-                      decoration: BoxDecoration(
-                        color: _difficulty.color,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(1000),
+                  child: FractionalTranslation(
+                    translation: const Offset(0, -0.5),
+                    child: Center(
+                      child: Container(
+                        height: 40,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 0,
                         ),
-                        border: Border.all(
-                          width: DesignConstants.cardBorderSize,
-                          color: Colors.white,
+                        decoration: BoxDecoration(
+                          color: _difficulty.color,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(1000),
+                          ),
+                          border: Border.all(
+                            width: DesignConstants.cardBorderSize,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            recipe.techniqueIds.length.toString(),
-                            style: DesignConstants.h3.copyWith(
-                              fontWeight: FontWeight.bold,
-                              height: 1.0,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              recipe.techniqueIds.length.toString(),
+                              style: DesignConstants.h3.copyWith(
+                                fontWeight: FontWeight.bold,
+                                height: 1.0,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 4),
-                          Image.asset(
-                            'assets/icons/chef_hat.png',
-                            width: 25,
-                            height: 25,
-                            fit: BoxFit.contain,
-                          ),
-                        ],
+                            const SizedBox(width: 4),
+                            Image.asset(
+                              'assets/icons/chef_hat.png',
+                              width: 25,
+                              height: 25,
+                              fit: BoxFit.contain,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

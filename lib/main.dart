@@ -7,6 +7,9 @@ import 'package:squillo/features/personal_recipes/bloc/personal_recipes_bloc.dar
 import 'package:squillo/features/personal_recipes/data/datasources/recipes_remote_datasource.dart';
 import 'package:squillo/features/personal_recipes/data/repositories/recipes_repository.dart';
 import 'package:squillo/features/personal_recipes/presentation/screens/personal_recipes_screen.dart';
+import 'package:squillo/features/recipe_detail/bloc/recipe_detail_bloc.dart';
+import 'package:squillo/features/techniques/data/datasources/techniques_remote_datasource.dart';
+import 'package:squillo/features/techniques/data/repositories/techniques_repository.dart';
 
 // Service locator instance
 final getIt = GetIt.instance;
@@ -24,18 +27,37 @@ void setupDependencies() {
   getIt.registerLazySingleton<ApiClient>(() => ApiClient());
 
   // Data sources
-  getIt.registerLazySingleton<RecipesRemoteDataSource>(
+  getIt.registerLazySingleton<RecipesRemoteDataSourceImpl>(
     () => RecipesRemoteDataSourceImpl(dio: getIt<ApiClient>().dio),
+  );
+
+  getIt.registerLazySingleton<TechniquesRemoteDataSourceImpl>(
+    () => TechniquesRemoteDataSourceImpl(dio: getIt<ApiClient>().dio),
   );
 
   // Repositories
   getIt.registerLazySingleton<RecipesRepository>(
-    () => RecipesRepository(remoteDataSource: getIt<RecipesRemoteDataSource>()),
+    () => RecipesRepository(
+      remoteDataSource: getIt<RecipesRemoteDataSourceImpl>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<TechniquesRepository>(
+    () => TechniquesRepository(
+      remoteDataSource: getIt<TechniquesRemoteDataSourceImpl>(),
+    ),
   );
 
   // Blocs
   getIt.registerFactory<PersonalRecipesBloc>(
     () => PersonalRecipesBloc(repository: getIt<RecipesRepository>()),
+  );
+
+  getIt.registerFactory<RecipeDetailBloc>(
+    () => RecipeDetailBloc(
+      repository: getIt<RecipesRepository>(),
+      techniquesRepository: getIt<TechniquesRepository>(),
+    ),
   );
 }
 
