@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:squillo/features/personal_recipes/data/models/loading_recipe.dart';
 
 /// Base class for all Import states.
 sealed class ImportState extends Equatable {
@@ -23,10 +24,13 @@ class ImportSuccess extends ImportState {
   /// The recipe ID that was imported
   final String recipeId;
 
-  const ImportSuccess(this.recipeId);
+  /// The loading recipe to track import status
+  final LoadingRecipe loadingRecipe;
+
+  const ImportSuccess(this.recipeId, this.loadingRecipe);
 
   @override
-  List<Object?> get props => [recipeId];
+  List<Object?> get props => [recipeId, loadingRecipe];
 }
 
 /// State when no recipe was found at the provided URL.

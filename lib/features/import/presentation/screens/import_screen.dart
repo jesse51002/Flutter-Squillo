@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:squillo/core/constants/design_constants.dart';
 import 'package:squillo/features/import/bloc/import_bloc.dart';
 import 'package:squillo/features/import/bloc/import_event.dart';
@@ -9,19 +10,32 @@ import 'package:squillo/features/import/presentation/widgets/import_description.
 import 'package:squillo/features/import/presentation/widgets/import_header.dart';
 import 'package:squillo/features/import/presentation/widgets/import_mascot.dart';
 import 'package:squillo/features/import/presentation/widgets/import_url_input.dart';
+import 'package:squillo/features/personal_recipes/bloc/personal_recipes_bloc.dart';
+import 'package:squillo/features/personal_recipes/presentation/screens/personal_recipes_screen.dart';
 
 /// Screen for importing recipes from URLs.
 ///
 /// Displays a mascot illustration, input field, and import button.
+/// Can optionally receive an [initialUrl] to pre-populate the input field.
 class ImportScreen extends StatefulWidget {
-  const ImportScreen({super.key});
+  /// Optional URL to pre-populate the import input field
+  final String? initialUrl;
+
+  const ImportScreen({super.key, this.initialUrl});
 
   @override
   State<ImportScreen> createState() => _ImportScreenState();
 }
 
 class _ImportScreenState extends State<ImportScreen> {
-  final TextEditingController _urlController = TextEditingController();
+  late final TextEditingController _urlController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize controller with initial URL if provided
+    _urlController = TextEditingController(text: widget.initialUrl ?? '');
+  }
 
   @override
   void dispose() {
@@ -45,7 +59,15 @@ class _ImportScreenState extends State<ImportScreen> {
               ),
               child: Column(
                 children: [
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 16),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   const ImportHeader(),
                   const SizedBox(height: 8),
                   const ImportMascot(),
@@ -72,7 +94,18 @@ class _ImportScreenState extends State<ImportScreen> {
 
   void _handleStateChanges(BuildContext context, ImportState state) {
     if (state is ImportSuccess) {
-      Navigator.of(context).pop();
+      // Navigate to personal recipes screen with initial loading recipe
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => PersonalRecipesBloc(
+              repository: GetIt.instance(),
+              initialLoadingRecipes: [state.loadingRecipe],
+            ),
+            child: const PersonalRecipesScreen(),
+          ),
+        ),
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Recipe import started! Check your recipes.'),

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squillo/core/constants/design_constants.dart';
-import 'package:squillo/features/import/bloc/import_bloc.dart';
-import 'package:squillo/features/import/presentation/screens/import_screen.dart';
 import 'package:squillo/features/personal_recipes/bloc/personal_recipes_bloc.dart';
 import 'package:squillo/features/personal_recipes/bloc/personal_recipes_event.dart';
 import 'package:squillo/features/personal_recipes/bloc/personal_recipes_state.dart';
@@ -11,7 +9,6 @@ import 'package:squillo/features/personal_recipes/presentation/widgets/import_ca
 import 'package:squillo/features/personal_recipes/presentation/widgets/loading_recipe_card.dart';
 import 'package:squillo/features/personal_recipes/presentation/widgets/recipe_grid.dart';
 import 'package:squillo/features/personal_recipes/presentation/widgets/recipes_search_bar.dart';
-import 'package:squillo/main.dart';
 import 'package:squillo/shared/widgets/loading_indicator.dart';
 
 /// Main screen for displaying personal recipes.
@@ -30,6 +27,7 @@ class _PersonalRecipesScreenState extends State<PersonalRecipesScreen> {
     super.initState();
     // Trigger loading when the screen initializes
     context.read<PersonalRecipesBloc>().add(const LoadRecipesRequested());
+
   }
 
   @override
@@ -86,26 +84,8 @@ class _PersonalRecipesScreenState extends State<PersonalRecipesScreen> {
 
           // Import card - only show when not searching
           if (state.searchQuery.isEmpty) ...[
-            SliverToBoxAdapter(
-              child: ImportCard(
-                onImportTap: () async {
-                  // Navigate to import screen
-                  final bloc = context.read<PersonalRecipesBloc>();
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => BlocProvider(
-                        create: (context) => getIt<ImportBloc>(),
-                        child: const ImportScreen(),
-                      ),
-                    ),
-                  );
-
-                  // Refresh recipes when returning from import screen
-                  if (mounted) {
-                    bloc.add(const RefreshRecipesRequested());
-                  }
-                },
-              ),
+            const SliverToBoxAdapter(
+              child: ImportCard(),
             ),
             SliverToBoxAdapter(
               child: SizedBox(height: state.hasLoadingRecipes ? 8 : 32),
