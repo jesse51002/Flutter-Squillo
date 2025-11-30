@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squillo/core/constants/design_constants.dart';
+import 'package:squillo/features/import/bloc/import_bloc.dart';
+import 'package:squillo/features/import/presentation/screens/import_screen.dart';
 import 'package:squillo/features/personal_recipes/bloc/personal_recipes_bloc.dart';
 import 'package:squillo/features/personal_recipes/bloc/personal_recipes_event.dart';
 import 'package:squillo/features/personal_recipes/bloc/personal_recipes_state.dart';
 import 'package:squillo/features/personal_recipes/presentation/widgets/difficulty_indicator.dart';
 import 'package:squillo/features/personal_recipes/presentation/widgets/import_card.dart';
+import 'package:squillo/features/personal_recipes/presentation/widgets/loading_recipe_card.dart';
 import 'package:squillo/features/personal_recipes/presentation/widgets/recipe_grid.dart';
 import 'package:squillo/features/personal_recipes/presentation/widgets/recipes_search_bar.dart';
+import 'package:squillo/main.dart';
 import 'package:squillo/shared/widgets/loading_indicator.dart';
 
 /// Main screen for displaying personal recipes.
@@ -82,8 +86,45 @@ class _PersonalRecipesScreenState extends State<PersonalRecipesScreen> {
 
           // Import card - only show when not searching
           if (state.searchQuery.isEmpty) ...[
-            const SliverToBoxAdapter(child: ImportCard()),
-            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+            SliverToBoxAdapter(
+              child: ImportCard(
+                onImportTap: () async {
+                  // Navigate to import screen
+                  final bloc = context.read<PersonalRecipesBloc>();
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider(
+                        create: (context) => getIt<ImportBloc>(),
+                        child: const ImportScreen(),
+                      ),
+                    ),
+                  );
+
+                  // Refresh recipes when returning from import screen
+                  if (mounted) {
+                    bloc.add(const RefreshRecipesRequested());
+                  }
+                },
+              ),
+            ),
+            SliverToBoxAdapter(child: SizedBox(
+              height: state.hasLoadingRecipes ? 8 : 32
+              )),
+          ],
+
+          // Loading recipes section
+          if (state.hasLoadingRecipes) ...[
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return LoadingRecipeCard(
+                    loadingRecipe: state.loadingRecipes[index],
+                  );
+                },
+                childCount: state.loadingRecipes.length,
+              ),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 8)),
           ],
 
           // Difficulty legend section with header

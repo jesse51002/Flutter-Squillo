@@ -32,7 +32,7 @@ class InstructionStepItem extends StatelessWidget {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: step.instruction,
+                  text: step.instruction.toLowerCase(),
                   style: DesignConstants.p.copyWith(
                     color: DesignConstants.text,
                   ),

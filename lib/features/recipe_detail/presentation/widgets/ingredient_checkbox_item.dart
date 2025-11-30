@@ -92,7 +92,7 @@ class IngredientCheckboxItem extends StatelessWidget {
                           ),
                         ),
                       TextSpan(
-                        text: ingredient.name,
+                        text: ingredient.name.toLowerCase(),
                         style: DesignConstants.p.copyWith(
                           color: DesignConstants.text,
                         ),

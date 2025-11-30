@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squillo/core/constants/app_constants.dart';
 import 'package:squillo/core/constants/design_constants.dart';
 import 'package:squillo/core/constants/difficulty.dart';
 import 'package:squillo/features/personal_recipes/data/models/recipe_display_data.dart';
@@ -55,20 +56,15 @@ class RecipeCard extends StatelessWidget {
                             image: NetworkImage(recipe.thumbnailUrl!),
                             fit: BoxFit.cover,
                           )
-                        : null,
+                        : DecorationImage(
+                            image: NetworkImage(AppConstants.kDefaultImageUrl),
+                            fit: BoxFit.cover,
+                          ),
                     color: recipe.thumbnailUrl == null
                         ? DesignConstants.buttonStroke
                         : null,
                   ),
-                  child: recipe.thumbnailUrl == null
-                      ? const Center(
-                          child: Icon(
-                            Icons.restaurant,
-                            size: 48,
-                            color: DesignConstants.text,
-                          ),
-                        )
-                      : null,
+                  child: null,
                 ),
 
                 // Top center: Technique count badge in pill cutout

@@ -28,3 +28,11 @@ class SearchRecipesRequested extends PersonalRecipesEvent {
 class RefreshRecipesRequested extends PersonalRecipesEvent {
   const RefreshRecipesRequested();
 }
+
+/// Event to poll for loading recipe updates.
+///
+/// This event is triggered automatically every 5 seconds when there are
+/// loading recipes to check their import status.
+class PollLoadingRecipesRequested extends PersonalRecipesEvent {
+  const PollLoadingRecipesRequested();
+}

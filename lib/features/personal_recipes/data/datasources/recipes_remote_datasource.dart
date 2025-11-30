@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:squillo/core/constants/api_constants.dart';
 import 'package:squillo/core/constants/app_constants.dart';
 import 'package:squillo/core/errors/exceptions.dart';
-import 'package:squillo/features/personal_recipes/data/models/recipe_display_data.dart';
+import 'package:squillo/features/personal_recipes/data/models/user_recipes_response.dart';
 import 'package:squillo/features/recipe_detail/data/models/stored_recipe.dart';
 import 'package:squillo/features/recipe_detail/data/models/update_ingredient_checked_request.dart';
 import 'package:squillo/features/recipe_detail/data/models/update_ingredient_checked_response.dart';
@@ -11,9 +11,11 @@ import 'package:squillo/features/recipe_detail/data/models/update_ingredient_che
 abstract class RecipesRemoteDataSource {
   /// Fetches all recipes for the given [userId].
   ///
+  /// Returns both completed recipes and recipes currently being imported.
+  ///
   /// Throws [ServerException] if the server returns an error.
   /// Throws [NetworkException] if there's a network connectivity issue.
-  Future<List<RecipeDisplayData>> getUserRecipes(String userId);
+  Future<UserRecipesResponse> getUserRecipes(String userId);
 }
 
 /// Implementation of [RecipesRemoteDataSource] using Dio.
@@ -24,20 +26,17 @@ class RecipesRemoteDataSourceImpl implements RecipesRemoteDataSource {
   RecipesRemoteDataSourceImpl({required this.dio});
 
   @override
-  Future<List<RecipeDisplayData>> getUserRecipes(String userId) async {
+  Future<UserRecipesResponse> getUserRecipes(String userId) async {
     try {
       final response = await dio.get(
         '${ApiConstants.recipesEndpoint}/$userId/recipes',
+        options: Options(receiveTimeout: AppConstants.kDefaultTimeout),
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data as List<dynamic>;
-        return data
-            .map(
-              (json) =>
-                  RecipeDisplayData.fromJson(json as Map<String, dynamic>),
-            )
-            .toList();
+        return UserRecipesResponse.fromJson(
+          response.data as Map<String, dynamic>,
+        );
       } else {
         throw ServerException('Failed to fetch recipes', response.statusCode);
       }

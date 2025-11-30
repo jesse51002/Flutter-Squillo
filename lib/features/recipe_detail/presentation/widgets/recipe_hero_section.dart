@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squillo/core/constants/app_constants.dart';
 import 'package:squillo/core/constants/design_constants.dart';
 import 'package:squillo/features/recipe_detail/bloc/recipe_detail_state.dart';
 
@@ -32,14 +33,11 @@ class RecipeHeroSection extends StatelessWidget {
       width: double.infinity,
       fit: BoxFit.cover,
       errorBuilder: (context, error, stackTrace) {
-        return Container(
+        return Image.network(
+          AppConstants.kDefaultImageUrl,
           height: 300,
-          color: DesignConstants.primarySubtle,
-          child: const Icon(
-            Icons.restaurant,
-            size: 64,
-            color: DesignConstants.primary,
-          ),
+          width: double.infinity,
+          fit: BoxFit.cover,
         );
       },
     );

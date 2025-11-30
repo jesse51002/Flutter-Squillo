@@ -1,5 +1,5 @@
 import 'package:squillo/features/personal_recipes/data/datasources/recipes_remote_datasource.dart';
-import 'package:squillo/features/personal_recipes/data/models/recipe_display_data.dart';
+import 'package:squillo/features/personal_recipes/data/models/user_recipes_response.dart';
 import 'package:squillo/features/recipe_detail/data/models/stored_recipe.dart';
 import 'package:squillo/features/recipe_detail/data/models/update_ingredient_checked_request.dart';
 import 'package:squillo/features/recipe_detail/data/models/update_ingredient_checked_response.dart';
@@ -17,15 +17,19 @@ class RecipesRepository {
 
   /// Fetches all recipes for the given [userId].
   ///
-  /// Returns a list of [RecipeDisplayData] sorted by creation date (newest first).
+  /// Returns [UserRecipesResponse] with both completed recipes and loading recipes.
+  /// Completed recipes are sorted by creation date (newest first).
   /// Throws exceptions from the data source (to be caught by Bloc).
-  Future<List<RecipeDisplayData>> getUserRecipes(String userId) async {
-    final recipes = await remoteDataSource.getUserRecipes(userId);
+  Future<UserRecipesResponse> getUserRecipes(String userId) async {
+    final response = await remoteDataSource.getUserRecipes(userId);
 
-    // Sort by created_at, newest first
-    recipes.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    // Sort completed recipes by created_at, newest first
+    final sortedRecipes = List.from(response.recipes)
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
-    return recipes;
+    return response.copyWith(
+      recipes: sortedRecipes.cast(),
+    );
   }
 
   /// Fetches a single recipe by [recipeId].

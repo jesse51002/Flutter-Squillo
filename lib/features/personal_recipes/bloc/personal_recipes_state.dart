@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:squillo/features/personal_recipes/data/models/loading_recipe.dart';
 import 'package:squillo/features/personal_recipes/data/models/recipe_display_data.dart';
 
 /// Base class for all PersonalRecipes states.
@@ -21,7 +22,7 @@ class PersonalRecipesLoading extends PersonalRecipesState {
 
 /// State when recipes have been successfully loaded.
 class PersonalRecipesLoaded extends PersonalRecipesState {
-  /// All recipes from the server
+  /// All completed recipes from the server
   final List<RecipeDisplayData> recipes;
 
   /// Filtered recipes based on search query
@@ -30,25 +31,39 @@ class PersonalRecipesLoaded extends PersonalRecipesState {
   /// Current search query
   final String searchQuery;
 
+  /// Recipes currently being imported
+  final List<LoadingRecipe> loadingRecipes;
+
   const PersonalRecipesLoaded({
     required this.recipes,
     required this.filteredRecipes,
     required this.searchQuery,
+    this.loadingRecipes = const [],
   });
 
   @override
-  List<Object?> get props => [recipes, filteredRecipes, searchQuery];
+  List<Object?> get props => [
+        recipes,
+        filteredRecipes,
+        searchQuery,
+        loadingRecipes,
+      ];
+
+  /// Returns true if there are any recipes currently being imported.
+  bool get hasLoadingRecipes => loadingRecipes.isNotEmpty;
 
   /// Creates a copy of this state with optional field updates.
   PersonalRecipesLoaded copyWith({
     List<RecipeDisplayData>? recipes,
     List<RecipeDisplayData>? filteredRecipes,
     String? searchQuery,
+    List<LoadingRecipe>? loadingRecipes,
   }) {
     return PersonalRecipesLoaded(
       recipes: recipes ?? this.recipes,
       filteredRecipes: filteredRecipes ?? this.filteredRecipes,
       searchQuery: searchQuery ?? this.searchQuery,
+      loadingRecipes: loadingRecipes ?? this.loadingRecipes,
     );
   }
 }

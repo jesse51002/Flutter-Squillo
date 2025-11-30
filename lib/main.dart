@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:squillo/core/constants/app_theme.dart';
 import 'package:squillo/core/network/api_client.dart';
+import 'package:squillo/features/import/bloc/import_bloc.dart';
+import 'package:squillo/features/import/data/datasources/import_remote_datasource.dart';
+import 'package:squillo/features/import/data/repositories/import_repository.dart';
 import 'package:squillo/features/personal_recipes/bloc/personal_recipes_bloc.dart';
 import 'package:squillo/features/personal_recipes/data/datasources/recipes_remote_datasource.dart';
 import 'package:squillo/features/personal_recipes/data/repositories/recipes_repository.dart';
@@ -35,6 +38,10 @@ void setupDependencies() {
     () => TechniquesRemoteDataSourceImpl(dio: getIt<ApiClient>().dio),
   );
 
+  getIt.registerLazySingleton<ImportRemoteDataSourceImpl>(
+    () => ImportRemoteDataSourceImpl(dio: getIt<ApiClient>().dio),
+  );
+
   // Repositories
   getIt.registerLazySingleton<RecipesRepository>(
     () => RecipesRepository(
@@ -48,6 +55,12 @@ void setupDependencies() {
     ),
   );
 
+  getIt.registerLazySingleton<ImportRepository>(
+    () => ImportRepository(
+      remoteDataSource: getIt<ImportRemoteDataSourceImpl>(),
+    ),
+  );
+
   // Blocs
   getIt.registerFactory<PersonalRecipesBloc>(
     () => PersonalRecipesBloc(repository: getIt<RecipesRepository>()),
@@ -58,6 +71,10 @@ void setupDependencies() {
       repository: getIt<RecipesRepository>(),
       techniquesRepository: getIt<TechniquesRepository>(),
     ),
+  );
+
+  getIt.registerFactory<ImportBloc>(
+    () => ImportBloc(repository: getIt<ImportRepository>()),
   );
 }
 

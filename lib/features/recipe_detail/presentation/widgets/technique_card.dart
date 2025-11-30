@@ -35,7 +35,7 @@ class TechniqueCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(DesignConstants.cardRadius),
           ),
           child: Padding(
-            padding: EdgeInsetsGeometry.all(8),
+            padding: const EdgeInsets.all(8),
             child: Image.network(
               technique.image,
               fit: BoxFit.contain,
@@ -50,12 +50,16 @@ class TechniqueCard extends StatelessWidget {
             ),
           ),
         ),
-        Text(
-          technique.name,
-          style: DesignConstants.h3.copyWith(color: DesignConstants.text),
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
+        const SizedBox(height: 8),
+        SizedBox(
+          width: 120,
+          child: Text(
+            technique.name.toLowerCase(),
+            style: DesignConstants.h3.copyWith(color: DesignConstants.text),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );

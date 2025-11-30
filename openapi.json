@@ -45,6 +45,45 @@
         }
       }
     },
+    "/v1/import/poll": {
+      "post": {
+        "summary": "Poll recipe import status",
+        "description": "Check the status of one or more recipe imports by recipe IDs",
+        "operationId": "poll_recipe_status_v1_import_poll_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PollingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PollingResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/database/create-user": {
       "post": {
         "tags": [
@@ -136,7 +175,7 @@
           "database"
         ],
         "summary": "Get all recipes for user",
-        "description": "Retrieves all recipes belonging to a user",
+        "description": "Retrieves all completed and loading recipes belonging to a user",
         "operationId": "get_user_recipes_v1_database_users__user_id__recipes_get",
         "parameters": [
           {
@@ -155,11 +194,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RecipeDisplayData"
-                  },
-                  "title": "Response Get User Recipes V1 Database Users  User Id  Recipes Get"
+                  "$ref": "#/components/schemas/UserRecipesResponse"
                 }
               }
             }
@@ -619,6 +654,12 @@
             "title": "Mock",
             "description": "If True, uses mock data instead of real API calls",
             "default": false
+          },
+          "polling": {
+            "type": "boolean",
+            "title": "Polling",
+            "description": "If True, return recipe_id immediately for polling instead of waiting for completion",
+            "default": false
           }
         },
         "type": "object",
@@ -639,21 +680,70 @@
                 "type": "null"
               }
             ],
-            "description": "Extracted recipe in markdown format"
+            "description": "Extracted recipe display data"
           },
           "no_recipe_found": {
             "type": "boolean",
             "title": "No Recipe Found",
-            "description": "Whether or not a recipe was found in the video"
+            "description": "Whether or not a recipe was found in the video",
+            "default": false
+          },
+          "recipe_id": {
+            "type": "string",
+            "title": "Recipe Id",
+            "description": "Recipe ID for the imported recipe"
           }
         },
         "type": "object",
         "required": [
-          "recipe",
-          "no_recipe_found"
+          "recipe_id"
         ],
         "title": "ImportResponse",
         "description": "Response model for recipe import (used by all platforms)."
+      },
+      "LoadingRecipe": {
+        "properties": {
+          "recipe_id": {
+            "type": "string",
+            "title": "Recipe Id",
+            "description": "Unique identifier for the recipe"
+          },
+          "original_link": {
+            "type": "string",
+            "title": "Original Link",
+            "description": "Original URL from which the recipe is being imported"
+          },
+          "time_started": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Time Started",
+            "description": "Timestamp when the import started"
+          },
+          "status": {
+            "$ref": "#/components/schemas/LoadingStatus",
+            "description": "Current status of the import",
+            "default": "processing"
+          }
+        },
+        "type": "object",
+        "required": [
+          "recipe_id",
+          "original_link"
+        ],
+        "title": "LoadingRecipe",
+        "description": "Schema for tracking recipes currently being imported."
+      },
+      "LoadingStatus": {
+        "type": "string",
+        "enum": [
+          "loading",
+          "processing",
+          "extracting_techniques",
+          "completed",
+          "error"
+        ],
+        "title": "LoadingStatus",
+        "description": "Status values for recipes being imported and polled."
       },
       "MarkTechniqueWatchedRequest": {
         "properties": {
@@ -710,6 +800,48 @@
         ],
         "title": "MarkTechniqueWatchedResponse",
         "description": "Response schema for marking technique as watched."
+      },
+      "PollingRequest": {
+        "properties": {
+          "recipe_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Recipe Ids",
+            "description": "List of recipe IDs to check status for"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "User ID who owns the recipes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "recipe_ids",
+          "user_id"
+        ],
+        "title": "PollingRequest",
+        "description": "Request model for polling recipe import status."
+      },
+      "PollingResponse": {
+        "properties": {
+          "statuses": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/RecipeStatus"
+            },
+            "type": "object",
+            "title": "Statuses",
+            "description": "Dictionary mapping recipe_id to its status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "statuses"
+        ],
+        "title": "PollingResponse",
+        "description": "Response model for polling recipe import status."
       },
       "RecipeDifficulty": {
         "type": "integer",
@@ -772,6 +904,43 @@
         ],
         "title": "RecipeDisplayData",
         "description": "Lightweight recipe schema for displaying recipe summaries in lists.\n\nContains only the essential information needed to display a recipe card\nor list item, without the full recipe details."
+      },
+      "RecipeStatus": {
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/LoadingStatus",
+            "description": "Current status of the recipe"
+          },
+          "recipe": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecipeDisplayData"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Recipe display data (only present when status is 'completed')"
+          },
+          "error_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Message",
+            "description": "Error message if status is 'error'"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "RecipeStatus",
+        "description": "Status of a single recipe in polling response."
       },
       "SimplifiedTechnique": {
         "properties": {
@@ -1192,6 +1361,29 @@
         ],
         "title": "UserCreateResponse",
         "description": "Response schema for user creation operations."
+      },
+      "UserRecipesResponse": {
+        "properties": {
+          "recipes": {
+            "items": {
+              "$ref": "#/components/schemas/RecipeDisplayData"
+            },
+            "type": "array",
+            "title": "Recipes",
+            "description": "List of completed recipes owned by the user"
+          },
+          "loading_recipes": {
+            "items": {
+              "$ref": "#/components/schemas/LoadingRecipe"
+            },
+            "type": "array",
+            "title": "Loading Recipes",
+            "description": "List of recipes currently being imported"
+          }
+        },
+        "type": "object",
+        "title": "UserRecipesResponse",
+        "description": "Response schema for getting all recipes for a user.\n\nContains both completed recipes and recipes currently being loaded."
       },
       "UserResponse": {
         "properties": {
