@@ -7,6 +7,7 @@ import 'package:squillo/features/import/bloc/import_event.dart';
 import 'package:squillo/features/import/bloc/import_state.dart';
 import 'package:squillo/features/import/data/models/import_request.dart';
 import 'package:squillo/features/import/data/repositories/import_repository.dart';
+import 'package:squillo/features/personal_recipes/data/models/loading_recipe.dart';
 
 /// Bloc for managing recipe import state.
 ///
@@ -39,7 +40,13 @@ class ImportBloc extends Bloc<ImportEvent, ImportState> {
       if (response.noRecipeFound) {
         emit(const ImportNoRecipeFound());
       } else {
-        emit(ImportSuccess(response.recipeId));
+        // Create loading recipe for tracking import status
+        final loadingRecipe = LoadingRecipe(
+          recipeId: response.recipeId,
+          originalLink: event.url,
+          status: LoadingStatus.loading,
+        );
+        emit(ImportSuccess(response.recipeId, loadingRecipe));
       }
     } on NetworkException catch (e, stackTrace) {
       log('Network error importing recipe', error: e, stackTrace: stackTrace);

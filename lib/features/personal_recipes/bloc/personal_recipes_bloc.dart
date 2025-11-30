@@ -7,6 +7,7 @@ import 'package:squillo/core/errors/exceptions.dart';
 import 'package:squillo/features/personal_recipes/bloc/personal_recipes_event.dart';
 import 'package:squillo/features/personal_recipes/bloc/personal_recipes_state.dart';
 import 'package:squillo/features/personal_recipes/data/models/loading_recipe.dart';
+import 'package:squillo/features/personal_recipes/data/models/polling_request.dart';
 import 'package:squillo/features/personal_recipes/data/models/recipe_display_data.dart';
 import 'package:squillo/features/personal_recipes/data/repositories/recipes_repository.dart';
 
@@ -20,12 +21,29 @@ class PersonalRecipesBloc
   Timer? _pollingTimer;
 
   /// Creates a [PersonalRecipesBloc] with the given [repository].
-  PersonalRecipesBloc({required this.repository})
-    : super(const PersonalRecipesInitial()) {
+  /// Optionally accepts [initialLoadingRecipes] to start with loading recipes.
+  PersonalRecipesBloc({
+    required this.repository,
+    List<LoadingRecipe>? initialLoadingRecipes,
+  }) : super(
+         initialLoadingRecipes != null && initialLoadingRecipes.isNotEmpty
+             ? PersonalRecipesLoaded(
+                 recipes: const [],
+                 filteredRecipes: const [],
+                 searchQuery: '',
+                 loadingRecipes: initialLoadingRecipes,
+               )
+             : const PersonalRecipesInitial(),
+       ) {
     on<LoadRecipesRequested>(_onLoadRecipesRequested);
     on<SearchRecipesRequested>(_onSearchRecipesRequested);
     on<RefreshRecipesRequested>(_onRefreshRecipesRequested);
     on<PollLoadingRecipesRequested>(_onPollLoadingRecipesRequested);
+
+    // Start polling if we have initial loading recipes
+    if (initialLoadingRecipes != null && initialLoadingRecipes.isNotEmpty) {
+      _startPolling();
+    }
   }
 
   @override
@@ -176,8 +194,9 @@ class PersonalRecipesBloc
 
   /// Handles the [PollLoadingRecipesRequested] event.
   ///
-  /// Polls the server for updated loading recipe statuses. When a recipe
-  /// completes, it's moved from loadingRecipes to the recipes list.
+  /// Polls the server for updated loading recipe statuses using the dedicated
+  /// polling endpoint. When a recipe completes, it's moved from loadingRecipes
+  /// to the recipes list.
   Future<void> _onPollLoadingRecipesRequested(
     PollLoadingRecipesRequested event,
     Emitter<PersonalRecipesState> emit,
@@ -192,22 +211,85 @@ class PersonalRecipesBloc
     }
 
     try {
-      final response = await repository.getUserRecipes(
-        AppConstants.kDefaultUserId,
-      );
-
-      // Check if any loading recipes have errors
-      final errorRecipes = response.loadingRecipes
-          .where((recipe) => recipe.status == LoadingStatus.error)
+      // Use the polling endpoint with recipe IDs from loading recipes
+      final recipeIds = currentState.loadingRecipes
+          .map((recipe) => recipe.recipeId)
           .toList();
 
-      // Merge existing recipes with any newly completed ones
-      final allRecipes = <RecipeDisplayData>[...response.recipes];
+      final pollingRequest = PollingRequest(
+        recipeIds: recipeIds,
+        userId: AppConstants.kDefaultUserId,
+      );
+
+      final pollingResponse = await repository.pollRecipeStatus(pollingRequest);
+
+      // Process polling response to update recipes and loading recipes
+      final updatedRecipes = <RecipeDisplayData>[...currentState.recipes];
+      final updatedLoadingRecipes = <LoadingRecipe>[];
+
+      for (final entry in pollingResponse.statuses.entries) {
+        final recipeId = entry.key;
+        final recipeStatus = entry.value;
+
+        if (recipeStatus.status == LoadingStatus.completed &&
+            recipeStatus.recipe != null) {
+          // Recipe completed - add to recipes list
+          updatedRecipes.add(recipeStatus.recipe!);
+        } else if (recipeStatus.status == LoadingStatus.error) {
+          var alreadyHadErr = false;
+
+          for (final x in currentState.loadingRecipes) {
+            if (x.recipeId == recipeId) {
+              alreadyHadErr = x.status == LoadingStatus.error;
+              break;
+            }
+          }
+
+          if (!alreadyHadErr) {
+            final originalRecipe = currentState.loadingRecipes.firstWhere(
+              (r) => r.recipeId == recipeId,
+              orElse: () => LoadingRecipe(
+                recipeId: recipeId,
+                originalLink: '',
+                status: recipeStatus.status,
+              ),
+            );
+
+            updatedLoadingRecipes.add(
+              LoadingRecipe(
+                recipeId: recipeId,
+                originalLink: originalRecipe.originalLink,
+                status: recipeStatus.status,
+              ),
+            );
+          }
+        } else {
+          // Recipe still loading or errored - keep in loading recipes
+          final originalRecipe = currentState.loadingRecipes.firstWhere(
+            (r) => r.recipeId == recipeId,
+            orElse: () => LoadingRecipe(
+              recipeId: recipeId,
+              originalLink: '',
+              status: recipeStatus.status,
+            ),
+          );
+          updatedLoadingRecipes.add(
+            LoadingRecipe(
+              recipeId: recipeId,
+              originalLink: originalRecipe.originalLink,
+              status: recipeStatus.status,
+            ),
+          );
+        }
+      }
+
+      // Sort recipes by created_at, newest first
+      updatedRecipes.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
       // Apply the current search filter to the updated recipes
       final filtered = currentState.searchQuery.isEmpty
-          ? allRecipes
-          : allRecipes
+          ? updatedRecipes
+          : updatedRecipes
                 .where(
                   (recipe) => recipe.recipeName.toLowerCase().contains(
                     currentState.searchQuery.toLowerCase(),
@@ -217,18 +299,21 @@ class PersonalRecipesBloc
 
       emit(
         currentState.copyWith(
-          recipes: allRecipes,
+          recipes: updatedRecipes,
           filteredRecipes: filtered,
-          loadingRecipes: response.loadingRecipes,
+          loadingRecipes: updatedLoadingRecipes,
         ),
       );
 
       // Stop polling if no more loading recipes
-      if (response.loadingRecipes.isEmpty) {
+      if (updatedLoadingRecipes.isEmpty) {
         _stopPolling();
       }
 
       // Log any errors for debugging
+      final errorRecipes = updatedLoadingRecipes
+          .where((recipe) => recipe.status == LoadingStatus.error)
+          .toList();
       for (final errorRecipe in errorRecipes) {
         log(
           'Recipe import failed: ${errorRecipe.recipeId} from ${errorRecipe.originalLink}',

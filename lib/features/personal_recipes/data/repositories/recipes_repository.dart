@@ -1,4 +1,6 @@
 import 'package:squillo/features/personal_recipes/data/datasources/recipes_remote_datasource.dart';
+import 'package:squillo/features/personal_recipes/data/models/polling_request.dart';
+import 'package:squillo/features/personal_recipes/data/models/polling_response.dart';
 import 'package:squillo/features/personal_recipes/data/models/user_recipes_response.dart';
 import 'package:squillo/features/recipe_detail/data/models/stored_recipe.dart';
 import 'package:squillo/features/recipe_detail/data/models/update_ingredient_checked_request.dart';
@@ -28,6 +30,14 @@ class RecipesRepository {
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
     return response.copyWith(recipes: sortedRecipes.cast());
+  }
+
+  /// Polls the status of recipe imports.
+  ///
+  /// Returns [PollingResponse] with status for each recipe_id.
+  /// Throws exceptions from the data source (to be caught by Bloc).
+  Future<PollingResponse> pollRecipeStatus(PollingRequest request) async {
+    return await remoteDataSource.pollRecipeStatus(request);
   }
 
   /// Fetches a single recipe by [recipeId].

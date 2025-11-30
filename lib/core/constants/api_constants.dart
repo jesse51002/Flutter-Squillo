@@ -4,9 +4,7 @@
 /// API-related configuration values.
 class ApiConstants {
   /// Base URL for the API (development)
-  /// Use 10.0.2.2 for Android emulator to access host machine's localhost
-  /// Use your machine's IP address for physical devices or iOS simulator
-  static const String baseUrl = 'http://10.0.2.2:8000';
+  static const String baseUrl = 'http://192.168.1.12:8000';
 
   /// Endpoint for fetching user recipes
   /// Use with path parameter: /v1/database/users/{user_id}/recipes

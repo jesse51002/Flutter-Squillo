@@ -41,9 +41,9 @@ class RecipeCard extends StatelessWidget {
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                // Main card container
+                // Main card container with border overlay
                 Container(
-                  decoration: BoxDecoration(
+                  foregroundDecoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(
                       DesignConstants.cardRadius,
                     ),
@@ -51,20 +51,27 @@ class RecipeCard extends StatelessWidget {
                       color: Colors.white,
                       width: DesignConstants.cardBorderSize,
                     ),
-                    image: recipe.thumbnailUrl != null
-                        ? DecorationImage(
-                            image: NetworkImage(recipe.thumbnailUrl!),
-                            fit: BoxFit.cover,
-                          )
-                        : DecorationImage(
-                            image: NetworkImage(AppConstants.kDefaultImageUrl),
-                            fit: BoxFit.cover,
-                          ),
-                    color: recipe.thumbnailUrl == null
-                        ? DesignConstants.buttonStroke
-                        : null,
                   ),
-                  child: null,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                      DesignConstants.cardRadius,
+                    ),
+                  ),
+                  child: Image.network(
+                    recipe.thumbnailUrl ?? AppConstants.kDefaultImageUrl,
+                    height: double.infinity,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.network(
+                        AppConstants.kDefaultImageUrl,
+                        height: double.infinity,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
                 ),
 
                 // Top center: Technique count badge in pill cutout
