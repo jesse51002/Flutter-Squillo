@@ -43,11 +43,11 @@ class PersonalRecipesLoaded extends PersonalRecipesState {
 
   @override
   List<Object?> get props => [
-        recipes,
-        filteredRecipes,
-        searchQuery,
-        loadingRecipes,
-      ];
+    recipes,
+    filteredRecipes,
+    searchQuery,
+    loadingRecipes,
+  ];
 
   /// Returns true if there are any recipes currently being imported.
   bool get hasLoadingRecipes => loadingRecipes.isNotEmpty;

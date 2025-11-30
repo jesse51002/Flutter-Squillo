@@ -48,11 +48,13 @@ class ImportBloc extends Bloc<ImportEvent, ImportState> {
       log('Server error importing recipe', error: e, stackTrace: stackTrace);
       emit(ImportError(e.message));
     } catch (e, stackTrace) {
-      log('Unexpected error importing recipe', error: e, stackTrace: stackTrace);
+      log(
+        'Unexpected error importing recipe',
+        error: e,
+        stackTrace: stackTrace,
+      );
       emit(
-        const ImportError(
-          'An unexpected error occurred. Please try again.',
-        ),
+        const ImportError('An unexpected error occurred. Please try again.'),
       );
     }
   }

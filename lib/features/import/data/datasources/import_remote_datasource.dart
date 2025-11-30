@@ -32,9 +32,7 @@ class ImportRemoteDataSourceImpl implements ImportRemoteDataSource {
       );
 
       if (response.statusCode == 200) {
-        return ImportResponse.fromJson(
-          response.data as Map<String, dynamic>,
-        );
+        return ImportResponse.fromJson(response.data as Map<String, dynamic>);
       } else {
         throw ServerException('Failed to import recipe', response.statusCode);
       }

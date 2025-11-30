@@ -21,29 +21,26 @@ class ImportUrlInput extends StatelessWidget {
       width: double.infinity,
       height: 48,
       child: TextField(
-      controller: controller,
-      enabled: enabled,
+        controller: controller,
+        enabled: enabled,
 
-      decoration: InputDecoration(
-        hintText: 'link',
-        hintStyle: DesignConstants.h3.copyWith(
-          color: DesignConstants.textHalf,
-          height: 1
-        ),
-        isDense: true,
-        filled: true,
-        fillColor: DesignConstants.text.withValues(alpha: 0.15),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(
-            DesignConstants.buttonRadius,
+        decoration: InputDecoration(
+          hintText: 'link',
+          hintStyle: DesignConstants.h3.copyWith(
+            color: DesignConstants.textHalf,
+            height: 1,
           ),
-          borderSide: BorderSide.none,
+          isDense: true,
+          filled: true,
+          fillColor: DesignConstants.text.withValues(alpha: 0.15),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(DesignConstants.buttonRadius),
+            borderSide: BorderSide.none,
+          ),
         ),
-
+        style: DesignConstants.h3,
+        textAlign: TextAlign.center,
       ),
-      style: DesignConstants.h3,
-      textAlign: TextAlign.center,
-    )
     );
   }
 }

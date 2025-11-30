@@ -104,10 +104,5 @@ class LoadingRecipe extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-        recipeId,
-        originalLink,
-        timeStarted,
-        status,
-      ];
+  List<Object?> get props => [recipeId, originalLink, timeStarted, status];
 }

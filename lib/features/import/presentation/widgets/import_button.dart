@@ -9,11 +9,7 @@ class ImportButton extends StatelessWidget {
   /// Callback when button is pressed
   final VoidCallback? onPressed;
 
-  const ImportButton({
-    super.key,
-    required this.isLoading,
-    this.onPressed,
-  });
+  const ImportButton({super.key, required this.isLoading, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +21,11 @@ class ImportButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: DesignConstants.primary,
           foregroundColor: DesignConstants.text,
-          disabledBackgroundColor:
-              DesignConstants.primary.withValues(alpha: 0.5),
+          disabledBackgroundColor: DesignConstants.primary.withValues(
+            alpha: 0.5,
+          ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              DesignConstants.buttonRadius,
-            ),
+            borderRadius: BorderRadius.circular(DesignConstants.buttonRadius),
           ),
         ),
         child: isLoading ? _buildLoadingIndicator() : _buildButtonText(),
@@ -44,9 +39,7 @@ class ImportButton extends StatelessWidget {
       height: 24,
       child: CircularProgressIndicator(
         strokeWidth: 2,
-        valueColor: AlwaysStoppedAnimation<Color>(
-          DesignConstants.text,
-        ),
+        valueColor: AlwaysStoppedAnimation<Color>(DesignConstants.text),
       ),
     );
   }
@@ -54,7 +47,7 @@ class ImportButton extends StatelessWidget {
   Widget _buildButtonText() {
     return Text(
       'import',
-      style: DesignConstants.h3.copyWith(fontWeight: FontWeight.w700)
+      style: DesignConstants.h3.copyWith(fontWeight: FontWeight.w700),
     );
   }
 }

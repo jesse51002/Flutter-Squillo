@@ -56,9 +56,8 @@ void setupDependencies() {
   );
 
   getIt.registerLazySingleton<ImportRepository>(
-    () => ImportRepository(
-      remoteDataSource: getIt<ImportRemoteDataSourceImpl>(),
-    ),
+    () =>
+        ImportRepository(remoteDataSource: getIt<ImportRemoteDataSourceImpl>()),
   );
 
   // Blocs

@@ -101,11 +101,9 @@ class _ImportScreenState extends State<ImportScreen> {
   void _handleImportPressed() {
     final url = _urlController.text.trim();
     if (url.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a URL'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please enter a URL')));
       return;
     }
     context.read<ImportBloc>().add(ImportRecipeRequested(url));

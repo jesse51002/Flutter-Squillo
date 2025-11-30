@@ -27,9 +27,7 @@ class RecipesRepository {
     final sortedRecipes = List.from(response.recipes)
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
-    return response.copyWith(
-      recipes: sortedRecipes.cast(),
-    );
+    return response.copyWith(recipes: sortedRecipes.cast());
   }
 
   /// Fetches a single recipe by [recipeId].

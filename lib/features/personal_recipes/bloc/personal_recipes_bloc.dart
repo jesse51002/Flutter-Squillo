@@ -21,7 +21,7 @@ class PersonalRecipesBloc
 
   /// Creates a [PersonalRecipesBloc] with the given [repository].
   PersonalRecipesBloc({required this.repository})
-      : super(const PersonalRecipesInitial()) {
+    : super(const PersonalRecipesInitial()) {
     on<LoadRecipesRequested>(_onLoadRecipesRequested);
     on<SearchRecipesRequested>(_onSearchRecipesRequested);
     on<RefreshRecipesRequested>(_onRefreshRecipesRequested);
@@ -208,10 +208,12 @@ class PersonalRecipesBloc
       final filtered = currentState.searchQuery.isEmpty
           ? allRecipes
           : allRecipes
-              .where((recipe) => recipe.recipeName
-                  .toLowerCase()
-                  .contains(currentState.searchQuery.toLowerCase()))
-              .toList();
+                .where(
+                  (recipe) => recipe.recipeName.toLowerCase().contains(
+                    currentState.searchQuery.toLowerCase(),
+                  ),
+                )
+                .toList();
 
       emit(
         currentState.copyWith(
@@ -228,7 +230,9 @@ class PersonalRecipesBloc
 
       // Log any errors for debugging
       for (final errorRecipe in errorRecipes) {
-        log('Recipe import failed: ${errorRecipe.recipeId} from ${errorRecipe.originalLink}');
+        log(
+          'Recipe import failed: ${errorRecipe.recipeId} from ${errorRecipe.originalLink}',
+        );
       }
     } on NetworkException catch (e, stackTrace) {
       log(

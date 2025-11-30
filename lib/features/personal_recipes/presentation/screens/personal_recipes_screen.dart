@@ -107,22 +107,19 @@ class _PersonalRecipesScreenState extends State<PersonalRecipesScreen> {
                 },
               ),
             ),
-            SliverToBoxAdapter(child: SizedBox(
-              height: state.hasLoadingRecipes ? 8 : 32
-              )),
+            SliverToBoxAdapter(
+              child: SizedBox(height: state.hasLoadingRecipes ? 8 : 32),
+            ),
           ],
 
           // Loading recipes section
           if (state.hasLoadingRecipes) ...[
             SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return LoadingRecipeCard(
-                    loadingRecipe: state.loadingRecipes[index],
-                  );
-                },
-                childCount: state.loadingRecipes.length,
-              ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                return LoadingRecipeCard(
+                  loadingRecipe: state.loadingRecipes[index],
+                );
+              }, childCount: state.loadingRecipes.length),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 8)),
           ],

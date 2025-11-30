@@ -10,7 +10,8 @@ class AppConstants {
   /// Default timeout for HTTP requests
   static const Duration kDefaultTimeout = Duration(seconds: 30);
 
-  static const String kDefaultImageUrl = "https://static.vecteezy.com/system/resources/previews/028/299/128/non_2x/a-well-organized-kitchen-counter-filled-with-fresh-ingredients-and-cooking-utensils-background-with-empty-space-for-text-photo.jpg";
+  static const String kDefaultImageUrl =
+      "https://static.vecteezy.com/system/resources/previews/028/299/128/non_2x/a-well-organized-kitchen-counter-filled-with-fresh-ingredients-and-cooking-utensils-background-with-empty-space-for-text-photo.jpg";
 
   // Private constructor to prevent instantiation
   AppConstants._();

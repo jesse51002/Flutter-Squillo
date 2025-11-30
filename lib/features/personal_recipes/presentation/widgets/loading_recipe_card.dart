@@ -12,10 +12,7 @@ class LoadingRecipeCard extends StatelessWidget {
   /// Error color for failed imports (red)
   static const Color _errorColor = Color(0xFFE63946);
 
-  const LoadingRecipeCard({
-    required this.loadingRecipe,
-    super.key,
-  });
+  const LoadingRecipeCard({required this.loadingRecipe, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +22,7 @@ class LoadingRecipeCard extends StatelessWidget {
         vertical: 8,
       ),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: _getBackgroundColor(),
-      ),
+      decoration: BoxDecoration(color: _getBackgroundColor()),
       child: Row(
         children: [
           _buildStatusIcon(),
@@ -86,11 +81,7 @@ class LoadingRecipeCard extends StatelessWidget {
   Widget _buildStatusIcon() {
     switch (loadingRecipe.status) {
       case LoadingStatus.error:
-        return const Icon(
-          Icons.error_outline,
-          color: _errorColor,
-          size: 24,
-        );
+        return const Icon(Icons.error_outline, color: _errorColor, size: 24);
       case LoadingStatus.completed:
         return const Icon(
           Icons.check_circle_outline,
