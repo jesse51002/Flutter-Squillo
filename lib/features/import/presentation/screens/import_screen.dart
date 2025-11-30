@@ -106,6 +106,24 @@ class _ImportScreenState extends State<ImportScreen> {
       ).showSnackBar(const SnackBar(content: Text('Please enter a URL')));
       return;
     }
-    context.read<ImportBloc>().add(ImportRecipeRequested(url));
+
+    // Normalize URL to ensure it has a protocol
+    final normalizedUrl = _normalizeUrl(url);
+    context.read<ImportBloc>().add(ImportRecipeRequested(normalizedUrl));
+  }
+
+  /// Normalizes a URL by ensuring it has a protocol scheme.
+  ///
+  /// If the URL doesn't start with http:// or https://, prepends https://.
+  /// Examples:
+  /// - "www.example.com" -> "https://www.example.com"
+  /// - "example.com" -> "https://example.com"
+  /// - "https://example.com" -> "https://example.com" (unchanged)
+  String _normalizeUrl(String url) {
+    final trimmed = url.trim();
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return trimmed;
+    }
+    return 'https://$trimmed';
   }
 }
