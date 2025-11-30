@@ -27,7 +27,6 @@ class _PersonalRecipesScreenState extends State<PersonalRecipesScreen> {
     super.initState();
     // Trigger loading when the screen initializes
     context.read<PersonalRecipesBloc>().add(const LoadRecipesRequested());
-
   }
 
   @override
@@ -84,9 +83,7 @@ class _PersonalRecipesScreenState extends State<PersonalRecipesScreen> {
 
           // Import card - only show when not searching
           if (state.searchQuery.isEmpty) ...[
-            const SliverToBoxAdapter(
-              child: ImportCard(),
-            ),
+            const SliverToBoxAdapter(child: ImportCard()),
             SliverToBoxAdapter(
               child: SizedBox(height: state.hasLoadingRecipes ? 8 : 32),
             ),

@@ -14,10 +14,7 @@ class PollingRequest extends Equatable {
   @JsonKey(name: 'user_id')
   final String userId;
 
-  const PollingRequest({
-    required this.recipeIds,
-    required this.userId,
-  });
+  const PollingRequest({required this.recipeIds, required this.userId});
 
   factory PollingRequest.fromJson(Map<String, dynamic> json) =>
       _$PollingRequestFromJson(json);

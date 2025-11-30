@@ -107,9 +107,10 @@ class _MainAppState extends State<MainApp> {
   /// Initialize listener for share intents from other apps.
   Future<void> _initShareIntentListener() async {
     // Listen for share intents when app is already running
-    _intentSubscription = receive_intent.ReceiveIntent.receivedIntentStream.listen((intent) {
-      _handleShareIntent(intent);
-    });
+    _intentSubscription = receive_intent.ReceiveIntent.receivedIntentStream
+        .listen((intent) {
+          _handleShareIntent(intent);
+        });
 
     // Check if app was opened with a share intent
     try {

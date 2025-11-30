@@ -26,15 +26,15 @@ class PersonalRecipesBloc
     required this.repository,
     List<LoadingRecipe>? initialLoadingRecipes,
   }) : super(
-          initialLoadingRecipes != null && initialLoadingRecipes.isNotEmpty
-              ? PersonalRecipesLoaded(
-                  recipes: const [],
-                  filteredRecipes: const [],
-                  searchQuery: '',
-                  loadingRecipes: initialLoadingRecipes,
-                )
-              : const PersonalRecipesInitial(),
-        ) {
+         initialLoadingRecipes != null && initialLoadingRecipes.isNotEmpty
+             ? PersonalRecipesLoaded(
+                 recipes: const [],
+                 filteredRecipes: const [],
+                 searchQuery: '',
+                 loadingRecipes: initialLoadingRecipes,
+               )
+             : const PersonalRecipesInitial(),
+       ) {
     on<LoadRecipesRequested>(_onLoadRecipesRequested);
     on<SearchRecipesRequested>(_onSearchRecipesRequested);
     on<RefreshRecipesRequested>(_onRefreshRecipesRequested);
@@ -221,9 +221,7 @@ class PersonalRecipesBloc
         userId: AppConstants.kDefaultUserId,
       );
 
-      final pollingResponse = await repository.pollRecipeStatus(
-        pollingRequest,
-      );
+      final pollingResponse = await repository.pollRecipeStatus(pollingRequest);
 
       // Process polling response to update recipes and loading recipes
       final updatedRecipes = <RecipeDisplayData>[...currentState.recipes];
@@ -239,15 +237,15 @@ class PersonalRecipesBloc
           updatedRecipes.add(recipeStatus.recipe!);
         } else if (recipeStatus.status == LoadingStatus.error) {
           var alreadyHadErr = false;
-          
-          for (final x in currentState.loadingRecipes){
+
+          for (final x in currentState.loadingRecipes) {
             if (x.recipeId == recipeId) {
               alreadyHadErr = x.status == LoadingStatus.error;
               break;
             }
           }
 
-          if (!alreadyHadErr){
+          if (!alreadyHadErr) {
             final originalRecipe = currentState.loadingRecipes.firstWhere(
               (r) => r.recipeId == recipeId,
               orElse: () => LoadingRecipe(
@@ -258,14 +256,13 @@ class PersonalRecipesBloc
             );
 
             updatedLoadingRecipes.add(
-            LoadingRecipe(
-              recipeId: recipeId,
-              originalLink: originalRecipe.originalLink,
-              status: recipeStatus.status,
-            ),
-          );
+              LoadingRecipe(
+                recipeId: recipeId,
+                originalLink: originalRecipe.originalLink,
+                status: recipeStatus.status,
+              ),
+            );
           }
-
         } else {
           // Recipe still loading or errored - keep in loading recipes
           final originalRecipe = currentState.loadingRecipes.firstWhere(
@@ -293,12 +290,12 @@ class PersonalRecipesBloc
       final filtered = currentState.searchQuery.isEmpty
           ? updatedRecipes
           : updatedRecipes
-              .where(
-                (recipe) => recipe.recipeName.toLowerCase().contains(
-                      currentState.searchQuery.toLowerCase(),
-                    ),
-              )
-              .toList();
+                .where(
+                  (recipe) => recipe.recipeName.toLowerCase().contains(
+                    currentState.searchQuery.toLowerCase(),
+                  ),
+                )
+                .toList();
 
       emit(
         currentState.copyWith(

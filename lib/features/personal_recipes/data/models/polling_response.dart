@@ -10,9 +10,7 @@ class PollingResponse extends Equatable {
   /// Dictionary mapping recipe_id to its status
   final Map<String, RecipeStatus> statuses;
 
-  const PollingResponse({
-    required this.statuses,
-  });
+  const PollingResponse({required this.statuses});
 
   factory PollingResponse.fromJson(Map<String, dynamic> json) =>
       _$PollingResponseFromJson(json);

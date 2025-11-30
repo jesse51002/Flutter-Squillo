@@ -57,7 +57,8 @@ class ImportCard extends StatelessWidget {
                           await Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => BlocProvider(
-                                create: (context) => GetIt.instance<ImportBloc>(),
+                                create: (context) =>
+                                    GetIt.instance<ImportBloc>(),
                                 child: const ImportScreen(),
                               ),
                             ),

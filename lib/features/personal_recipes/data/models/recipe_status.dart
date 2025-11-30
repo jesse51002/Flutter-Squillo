@@ -18,11 +18,7 @@ class RecipeStatus extends Equatable {
   @JsonKey(name: 'error_message')
   final String? errorMessage;
 
-  const RecipeStatus({
-    required this.status,
-    this.recipe,
-    this.errorMessage,
-  });
+  const RecipeStatus({required this.status, this.recipe, this.errorMessage});
 
   factory RecipeStatus.fromJson(Map<String, dynamic> json) =>
       _$RecipeStatusFromJson(json);
